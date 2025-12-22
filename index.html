@@ -5,16 +5,38 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>뜻밖의시장 | 셀러 모집</title>
+
+  <!-- 지도 라이브러리 -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <style>
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:#0b0b0c;color:#f4f4f6}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
+      background:#0b0b0c;
+      color:#f4f4f6
+    }
     .wrap{max-width:720px;margin:0 auto;padding:24px}
     h1{font-size:22px;margin-bottom:8px}
     .muted{color:#aaa;font-size:14px}
     .card{margin-top:20px;padding:16px;border-radius:16px;background:#16161a}
     .item{padding:14px;border-radius:12px;background:#222;margin-bottom:10px}
-    .btn{display:block;margin-top:16px;padding:14px;text-align:center;border-radius:12px;background:#fff;color:#000;font-weight:700;text-decoration:none}
+    .btn{
+      display:block;margin-top:16px;padding:14px;
+      text-align:center;border-radius:12px;
+      background:#fff;color:#000;
+      font-weight:700;text-decoration:none
+    }
+    #map{
+      height:360px;
+      margin-top:10px;
+      border-radius:12px;
+      overflow:hidden
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <h1>뜻밖의시장 셀러 모집</h1>
@@ -25,6 +47,7 @@
         <b>뜻밖의시장 동탄</b><br>
         <span class="muted">10.12–10.13 · 동탄 신도시</span>
       </div>
+
       <div class="item">
         <b>뜻밖의시장 수원</b><br>
         <span class="muted">10.26–10.27 · 수원 영통</span>
@@ -32,6 +55,35 @@
 
       <a class="btn" href="#">셀러 지원하기</a>
     </div>
+
+    <div class="card">
+      <h2>행사 지도</h2>
+      <div class="muted">행사 지역을 지도에서 확인하세요</div>
+      <div id="map"></div>
+    </div>
   </div>
+
+  <script>
+    // 지도 초기화 (동탄/용인 중간)
+    const map = L.map('map').setView([37.22, 127.10], 11);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    // 행사 위치 5곳
+    const locations = [
+      { name:"동탄 1", lat:37.199, lng:127.072 },
+      { name:"동탄 2", lat:37.206, lng:127.063 },
+      { name:"용인 1", lat:37.241, lng:127.177 },
+      { name:"용인 2", lat:37.268, lng:127.152 },
+      { name:"근교",  lat:37.230, lng:127.110 }
+    ];
+
+    locations.forEach(p => {
+      L.marker([p.lat, p.lng]).addTo(map)
+        .bindPopup(`<b>${p.name}</b><br/>셀러 모집 중`);
+    });
+  </script>
 </body>
 </html>
