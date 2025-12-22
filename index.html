@@ -2,88 +2,373 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>뜻밖의시장 | 셀러 모집</title>
 
-  <!-- 지도 라이브러리 -->
+  <!-- Leaflet (지도) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
+    :root{
+      --bg:#0b0b0c; --card:#16161a;
+      --text:#f4f4f6; --muted:#a8a8ad; --line:rgba(255,255,255,.10);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
     body{
       margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
-      background:#0b0b0c;
-      color:#f4f4f6
+      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+      background:var(--bg); color:var(--text);
     }
-    .wrap{max-width:720px;margin:0 auto;padding:24px}
-    h1{font-size:22px;margin-bottom:8px}
-    .muted{color:#aaa;font-size:14px}
-    .card{margin-top:20px;padding:16px;border-radius:16px;background:#16161a}
-    .item{padding:14px;border-radius:12px;background:#222;margin-bottom:10px}
+    .top{
+      position:sticky; top:0; z-index:20;
+      background:rgba(11,11,12,.78);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .topin{max-width:980px;margin:0 auto;padding:14px 16px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .brand b{display:block;font-size:15px;letter-spacing:-.2px}
+    .brand span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+    .wrap{max-width:980px;margin:0 auto;padding:18px 16px 90px}
+    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;margin-top:14px}
+    @media(max-width:920px){.grid{grid-template-columns:1fr}}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:16px;
+    }
+    h1{font-size:18px;margin:0 0 6px}
+    h2{font-size:15px;margin:0 0 10px}
+    .muted{color:var(--muted);font-size:13px;line-height:1.5}
+    .hr{height:1px;background:var(--line);margin:14px 0}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .btn{
-      display:block;margin-top:16px;padding:14px;
-      text-align:center;border-radius:12px;
-      background:#fff;color:#000;
-      font-weight:700;text-decoration:none
+      display:inline-block;
+      border:0;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.10);
+      color:var(--text);
+      cursor:pointer;
+      font-size:14px;
+      text-decoration:none;
+    }
+    .btn.primary{background:#fff;color:#000;font-weight:900}
+    .btn.ghost{border:1px solid rgba(255,255,255,.16);background:transparent}
+    .item{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.16);
+      cursor:pointer;
+    }
+    .tag{
+      display:inline-block;
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+      white-space:nowrap;
     }
     #map{
-      height:360px;
+      height:420px;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
       margin-top:10px;
-      border-radius:12px;
-      overflow:hidden
     }
+    .toast{
+      position:fixed; left:50%; transform:translateX(-50%);
+      bottom:16px; z-index:50;
+      background:rgba(0,0,0,.75);
+      border:1px solid rgba(255,255,255,.16);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      display:none;
+      max-width:92vw;
+    }
+    .small{font-size:12px;color:var(--muted)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+    .kv{display:grid;grid-template-columns:110px 1fr;gap:6px 10px;margin-top:10px}
+    .kv .k{color:var(--muted);font-size:13px}
+    .kv .v{font-size:13px}
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <h1>뜻밖의시장 셀러 모집</h1>
-    <div class="muted">출점 공고를 확인하고 지원하세요</div>
-
-    <div class="card">
-      <div class="item">
-        <b>뜻밖의시장 동탄</b><br>
-        <span class="muted">10.12–10.13 · 동탄 신도시</span>
+  <div class="top">
+    <div class="topin">
+      <div class="brand">
+        <b>뜻밖의시장 · 셀러 모집</b>
+        <span>지도에서 행사 위치 확인 → 구글폼으로 지원</span>
       </div>
-
-      <div class="item">
-        <b>뜻밖의시장 수원</b><br>
-        <span class="muted">10.26–10.27 · 수원 영통</span>
-      </div>
-
-      <a class="btn" href="#">셀러 지원하기</a>
-    </div>
-
-    <div class="card">
-      <h2>행사 지도</h2>
-      <div class="muted">행사 지역을 지도에서 확인하세요</div>
-      <div id="map"></div>
+      <span class="tag" id="geocodeStatus">지도 로딩중…</span>
     </div>
   </div>
 
+  <div class="wrap">
+    <div class="grid">
+      <!-- LEFT: Map + Event list -->
+      <section class="card">
+        <h1>행사 지도</h1>
+        <div class="muted">핀을 누르면 <b>아파트명 + 행사날짜</b>가 뜨고, “이 행사로 지원” 버튼으로 지원폼이 열립니다.</div>
+        <div id="map"></div>
+
+        <div class="hr"></div>
+        <h2>행사 리스트 (5곳)</h2>
+        <div class="muted">리스트를 눌러도 동일하게 해당 행사로 지원폼이 열립니다.</div>
+        <div class="hr"></div>
+
+        <div id="eventList" class="row" style="flex-direction:column;align-items:stretch;gap:10px"></div>
+
+        <div class="hr"></div>
+        <div class="small">
+          주소는 “주소 → 좌표 자동 변환(지오코딩)” 방식이라 첫 로딩에 몇 초 걸릴 수 있어요.<br>
+          주소가 너무 뭉뚱그려져 있으면 핀이 안 찍힐 수 있어요. (아파트명 + 도로명 형태 추천)
+        </div>
+      </section>
+
+      <!-- RIGHT: Apply -->
+      <section class="card" id="applyPanel">
+        <h1>셀러 지원</h1>
+        <div class="muted">운영용 실전 버전: 지원 데이터는 <b>구글폼/구글시트</b>로 저장됩니다.</div>
+
+        <div class="hr"></div>
+
+        <div class="item" id="selectedEventBox" style="cursor:default">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+            <div>
+              <b id="selName">행사를 선택해 주세요</b>
+              <div class="small" id="selDate"></div>
+              <div class="small" id="selAddr"></div>
+            </div>
+            <span class="tag" id="selTag">선택 대기</span>
+          </div>
+          <div class="hr"></div>
+          <div class="kv">
+            <div class="k">지원 방법</div>
+            <div class="v">아래 버튼을 눌러 구글폼을 제출하면 접수 완료</div>
+            <div class="k">소요 시간</div>
+            <div class="v">약 30초 (필수 4개 항목)</div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:14px">
+          <a class="btn primary" id="applyBtn" href="#" target="_blank" rel="noopener">이 행사로 지원하기</a>
+          <button class="btn ghost" id="copyEvent" type="button">행사명 복사</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>궁금증 / 문의</h2>
+        <div class="muted">문의는 별도 폼으로 받는 게 가장 안정적입니다.</div>
+        <div class="row" style="margin-top:12px">
+          <a class="btn" id="questionBtn" href="#" target="_blank" rel="noopener">문의/궁금증 남기기</a>
+          <button class="btn ghost" type="button" id="copyEmail">이메일 복사</button>
+        </div>
+        <div class="small" style="margin-top:10px">
+          운영자 이메일: <span class="mono" id="adminEmailText">marketfindout@gmail.com</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
   <script>
-    // 지도 초기화 (동탄/용인 중간)
-    const map = L.map('map').setView([37.22, 127.10], 11);
+    // ============================
+    // ✅ 1) 여기만 바꾸면 됩니다
+    // ============================
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap'
-    }).addTo(map);
+    // (A) 셀러 지원 구글폼 "미리보기(viewform)" URL을 넣으세요
+    const SELLER_FORM_BASE = "여기에_구글폼_미리보기_URL"; 
+    // 예: "https://docs.google.com/forms/d/e/FORM_ID/viewform"
 
-    // 행사 위치 5곳
-    const locations = [
-      { name:"동탄 1", lat:37.199, lng:127.072 },
-      { name:"동탄 2", lat:37.206, lng:127.063 },
-      { name:"용인 1", lat:37.241, lng:127.177 },
-      { name:"용인 2", lat:37.268, lng:127.152 },
-      { name:"근교",  lat:37.230, lng:127.110 }
+    // (B) 문의/궁금증 구글폼 URL (없으면 # 유지)
+    const QUESTION_FORM_URL = "#"; // 예: https://docs.google.com/forms/d/e/FORM_ID/viewform
+
+    // (C) 지도에 꽂을 행사 5곳 (실제 주소/아파트명/날짜로 수정)
+    const EVENTS = [
+      { name:"동탄역 롯데캐슬", date:"2026-01-10 ~ 2026-01-11", address:"경기도 화성시 동탄역로 160 동탄역 롯데캐슬" },
+      { name:"동탄2 더샵 센트럴시티", date:"2026-01-24 ~ 2026-01-25", address:"경기도 화성시 동탄대로 635 더샵 센트럴시티" },
+      { name:"동탄 호수공원 인근 아파트", date:"2026-02-07 ~ 2026-02-08", address:"경기도 화성시 동탄순환대로 10 동탄호수공원" },
+      { name:"용인 죽전 힐스테이트", date:"2026-02-14 ~ 2026-02-15", address:"경기도 용인시 수지구 죽전로 150 힐스테이트" },
+      { name:"용인 동백 호수마을", date:"2026-02-21 ~ 2026-02-22", address:"경기도 용인시 기흥구 동백중앙로 191" }
     ];
 
-    locations.forEach(p => {
-      L.marker([p.lat, p.lng]).addTo(map)
-        .bindPopup(`<b>${p.name}</b><br/>셀러 모집 중`);
+    // ============================
+    // 내부 기능 (수정 불필요)
+    // ============================
+    const $ = (id) => document.getElementById(id);
+    const toast = (msg) => {
+      const t = $("toast");
+      t.textContent = msg;
+      t.style.display = "block";
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=> t.style.display = "none", 2200);
+    };
+    function escapeHtml(s){
+      return String(s ?? "").replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    // ------- Event select + form link -------
+    let selectedEvent = null;
+
+    function buildPrefilledFormUrl(e){
+      // 구글폼 사전입력(entry.XXXX)은 폼마다 다르니
+      // MVP에서는 "행사명 복사" 버튼을 함께 둡니다.
+      // (원하면 다음 단계에서 entry 코드로 자동 입력까지 해드림)
+      return SELLER_FORM_BASE;
+    }
+
+    function selectEvent(e){
+      selectedEvent = e;
+
+      $("selName").textContent = e.name;
+      $("selDate").textContent = e.date;
+      $("selAddr").textContent = e.address;
+      $("selTag").textContent = "선택됨";
+
+      const url = buildPrefilledFormUrl(e);
+      $("applyBtn").href = url;
+
+      // 모바일 UX: 선택하면 오른쪽 지원 영역으로 이동
+      $("applyPanel").scrollIntoView({behavior:"smooth", block:"start"});
+      toast("행사 선택됨. 이제 ‘이 행사로 지원하기’를 누르세요.");
+    }
+
+    $("copyEvent").addEventListener("click", async () => {
+      if (!selectedEvent){
+        toast("먼저 행사를 선택해 주세요");
+        return;
+      }
+      const text = `${selectedEvent.name} (${selectedEvent.date})`;
+      try{
+        await navigator.clipboard.writeText(text);
+        toast("행사명 복사됨 (구글폼 첫 질문에 붙여넣기)");
+      }catch{
+        toast("복사 실패(브라우저 권한)");
+      }
     });
+
+    // ------- Q&A button + email copy -------
+    $("questionBtn").href = QUESTION_FORM_URL;
+    $("copyEmail").addEventListener("click", async () => {
+      const email = $("adminEmailText").textContent.trim();
+      try{
+        await navigator.clipboard.writeText(email);
+        toast("이메일 복사됨");
+      }catch{
+        toast("복사 실패(브라우저 권한)");
+      }
+    });
+
+    // ------- Render event list -------
+    function renderEventList(){
+      const box = $("eventList");
+      box.innerHTML = "";
+      EVENTS.forEach((e) => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+            <div>
+              <b>${escapeHtml(e.name)}</b>
+              <div class="small">${escapeHtml(e.date)}</div>
+              <div class="small">${escapeHtml(e.address)}</div>
+            </div>
+            <span class="tag">선택</span>
+          </div>
+        `;
+        div.addEventListener("click", () => selectEvent(e));
+        box.appendChild(div);
+      });
+    }
+
+    // ------- Map + geocoding -------
+    const statusTag = $("geocodeStatus");
+
+    async function geocodeAddress(address){
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(address)}`;
+      const res = await fetch(url, {headers: {"Accept":"application/json"}});
+      const data = await res.json();
+      if (!data || !data[0]) return null;
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    }
+
+    async function initMap(){
+      const map = L.map("map").setView([37.22, 127.10], 11);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(map);
+
+      statusTag.textContent = "주소 좌표 변환중…";
+
+      let ok = 0;
+
+      for (let i=0; i<EVENTS.length; i++){
+        const e = EVENTS[i];
+        try{
+          // 과도한 요청 방지: 약간의 텀
+          await new Promise(r => setTimeout(r, 350));
+
+          const pos = await geocodeAddress(e.address);
+          if (!pos) continue;
+
+          ok++;
+
+          const popupHtml = `
+            <div style="min-width:210px">
+              <b>${escapeHtml(e.name)}</b><br/>
+              <span style="font-size:12px;color:#666">${escapeHtml(e.date)}</span><br/>
+              <span style="font-size:12px;color:#666">${escapeHtml(e.address)}</span><br/>
+              <div style="margin-top:10px">
+                <button id="apply-${i}" style="border:0;border-radius:10px;padding:10px 12px;background:#111;color:#fff;cursor:pointer">
+                  이 행사로 지원
+                </button>
+              </div>
+            </div>
+          `;
+
+          const marker = L.marker([pos.lat, pos.lng]).addTo(map).bindPopup(popupHtml);
+
+          marker.on("popupopen", () => {
+            const btn = document.getElementById(`apply-${i}`);
+            if (btn){
+              btn.onclick = () => {
+                selectEvent(e);
+                marker.closePopup();
+              };
+            }
+          });
+
+        }catch(err){
+          // ignore
+        }
+      }
+
+      if (ok > 0){
+        statusTag.textContent = `핀 ${ok}개 표시됨`;
+        // 첫 번째 행사 기본 선택(원하면 제거 가능)
+        selectEvent(EVENTS[0]);
+      } else {
+        statusTag.textContent = "주소 확인 필요";
+        toast("주소를 찾지 못했어요. EVENTS의 address를 더 정확히 수정해 주세요.");
+      }
+    }
+
+    // Init
+    renderEventList();
+    initMap();
   </script>
 </body>
 </html>
