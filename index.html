@@ -8,94 +8,268 @@
   <title>뜻밖의시장 | 셀러 모집</title>
 
   <style>
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-      background:#0b0b0c;color:#f4f4f6;
-    }
-    .wrap{max-width:720px;margin:0 auto;padding:24px 16px 80px}
-    h1{font-size:22px;margin:0 0 8px}
-    .muted{color:#aaa;font-size:14px}
-    .card{margin-top:20px;padding:16px;border-radius:16px;background:#16161a}
-    .item{padding:14px;border-radius:12px;background:#222;margin-bottom:10px}
-    .btn{
-      display:block;margin-top:16px;padding:14px;
-      text-align:center;border-radius:12px;
-      background:#fff;color:#000;
-      font-weight:700;text-decoration:none
-    }
-    .badge{font-size:12px;color:#8cffc1;margin-left:6px}
+    :root{--bg:#0b0b0c;--card:#16161a;--line:rgba(255,255,255,.10);--muted:#aaa;}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:#f4f4f6}
+    .wrap{max-width:820px;margin:0 auto;padding:20px 16px 90px}
+    h1{font-size:22px;margin:0 0 6px}
+    h2{font-size:16px;margin:0 0 10px}
+    .muted{color:var(--muted);font-size:13px;line-height:1.5}
+    .card{margin-top:14px;padding:16px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+    .item{padding:14px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid var(--line);margin-bottom:10px;cursor:pointer}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btn{display:inline-block;border:0;padding:12px 14px;border-radius:14px;background:#fff;color:#000;font-weight:900;text-decoration:none;cursor:pointer}
+    .btn.sub{background:rgba(255,255,255,.10);color:#fff;font-weight:700;border:1px solid rgba(255,255,255,.14)}
+    .tag{display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#cfcfd3;background:rgba(255,255,255,.05)}
+    .tag.ok{border-color:rgba(120,255,180,.22);color:rgba(170,255,205,.95);background:rgba(120,255,180,.06)}
+    label{display:block;font-size:12px;color:#cfcfd3;margin:10px 0 6px}
+    input, select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25);color:#fff;font-size:14px}
+    .grid{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:720px){ .grid{grid-template-columns:1fr 1fr} }
+    .hr{height:1px;background:var(--line);margin:14px 0}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:50;background:rgba(0,0,0,.78);
+      border:1px solid rgba(255,255,255,.16);padding:10px 12px;border-radius:999px;font-size:13px;display:none;max-width:92vw}
   </style>
 </head>
 
 <body>
   <div class="wrap">
     <h1>뜻밖의시장 셀러 모집</h1>
-    <div class="muted">행사를 선택하고 바로 지원하세요</div>
+    <div class="muted">① 내 정보 저장(1회) → ② 행사 선택 → ③ 지원(자동입력)</div>
 
+    <!-- 1) 셀러 정보 저장 -->
     <div class="card">
-      <div class="item" onclick="selectEvent('동탄역 롯데캐슬','2026-01-10 ~ 01-11')">
+      <h2>기존 셀러 정보 (1회 저장)</h2>
+      <div class="muted">이 기기(아이폰/아이패드)에 저장됩니다. 다음 신청부터 자동으로 채워집니다.</div>
+
+      <div class="hr"></div>
+
+      <div class="grid">
+        <div>
+          <label>상호명 / 브랜드명 *</label>
+          <input id="p_brand" placeholder="예) 출출빌라">
+        </div>
+        <div>
+          <label>대표자 이름 *</label>
+          <input id="p_owner" placeholder="예) 전세운">
+        </div>
+        <div>
+          <label>휴대폰 번호 *</label>
+          <input id="p_phone" inputmode="tel" placeholder="예) 010-1234-5678">
+        </div>
+        <div>
+          <label>이메일 *</label>
+          <input id="p_email" inputmode="email" placeholder="예) marketfindout@gmail.com">
+        </div>
+        <div>
+          <label>판매 카테고리 *</label>
+          <select id="p_category">
+            <option value="">선택</option>
+            <option value="푸드">푸드</option>
+            <option value="디저트">디저트</option>
+            <option value="수공예">수공예</option>
+            <option value="라이프스타일">라이프스타일</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div>
+          <label>인스타그램 계정 (선택)</label>
+          <input id="p_insta" placeholder="예) @brandname">
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="saveProfile">내 정보 저장</button>
+        <button class="btn sub" id="clearProfile">저장 삭제</button>
+        <span class="tag" id="profileStatus">저장 안됨</span>
+      </div>
+    </div>
+
+    <!-- 2) 행사 선택 -->
+    <div class="card">
+      <h2>행사 선택</h2>
+      <div class="muted">행사를 선택한 뒤 “이 행사로 지원하기”를 누르세요.</div>
+
+      <div class="hr"></div>
+
+      <div class="item" onclick="selectEvent('dt1','동탄역 롯데캐슬','2026-01-10 ~ 01-11')">
         <b>동탄역 롯데캐슬</b>
-        <span id="done-1" class="badge" style="display:none">신청완료</span><br>
-        <span class="muted">2026-01-10 ~ 01-11</span>
+        <span class="tag ok" id="done-dt1" style="display:none">신청완료</span><br>
+        <span class="muted">2026-01-10 ~ 01-11 · 동탄</span>
       </div>
 
-      <div class="item" onclick="selectEvent('용인 죽전 힐스테이트','2026-01-24 ~ 01-25')">
+      <div class="item" onclick="selectEvent('yi1','용인 죽전 힐스테이트','2026-01-24 ~ 01-25')">
         <b>용인 죽전 힐스테이트</b>
-        <span id="done-2" class="badge" style="display:none">신청완료</span><br>
-        <span class="muted">2026-01-24 ~ 01-25</span>
+        <span class="tag ok" id="done-yi1" style="display:none">신청완료</span><br>
+        <span class="muted">2026-01-24 ~ 01-25 · 용인</span>
       </div>
 
-      <a class="btn" href="#" id="applyBtn">이 행사로 지원하기</a>
+      <div class="hr"></div>
+
+      <div class="item" style="cursor:default">
+        <b id="selName">선택된 행사 없음</b><br>
+        <span class="muted" id="selDate"></span>
+      </div>
+
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="applyBtn">이 행사로 지원하기 (자동입력)</button>
+        <button class="btn sub" id="markDoneBtn">신청완료 표시/해제</button>
+      </div>
+
+      <div class="muted" style="margin-top:10px">
+        * “신청완료” 표시는 이 기기에서만 저장됩니다(서버 없음).<br>
+        * MVP 단계에서는 가장 안정적인 방식입니다.
+      </div>
     </div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
 <script>
   /***********************
-   * 🔧 전세운님 수정 영역
+   * ✅ 전세운님 수정 영역 (2개)
    ***********************/
-
-  // 1) 셀러 지원 구글폼 viewform 주소
+  // 1) 구글폼 viewform 주소
   const SELLER_FORM_BASE =
     "https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform";
 
-  // 2) ‘지원 행사’ 질문의 entry 번호
-  const ENTRY_EVENT_NAME = "entry.123456789"; // ← 반드시 실제 번호로 교체
+  // 2) 구글폼 각 질문의 entry 번호 (꼭 실제 값으로 바꿔야 자동입력 됨)
+  const ENTRY = {
+    event:    "entry.111111111", // 8. 지원 행사
+    brand:    "entry.222222222", // 1. 상호명/브랜드명
+    owner:    "entry.333333333", // 2. 대표자 이름
+    phone:    "entry.444444444", // 3. 연락처
+    email:    "entry.555555555", // 4. 이메일
+    category: "entry.666666666", // 5. 판매 카테고리
+    insta:    "entry.777777777"  // 6. 인스타(선택)
+  };
 
   /***********************
    * 내부 로직
    ***********************/
-  let selectedEvent = "";
+  const LS_PROFILE = "um_seller_profile_v1";
+  const LS_DONE = "um_done_events_v1";
 
-  function selectEvent(name, date){
-    selectedEvent = `${name} (${date})`;
-    alert(`선택됨: ${selectedEvent}`);
+  const toastEl = document.getElementById("toast");
+  const toast = (msg) => {
+    toastEl.textContent = msg;
+    toastEl.style.display = "block";
+    clearTimeout(window.__t);
+    window.__t = setTimeout(()=> toastEl.style.display="none", 2200);
+  };
+  const $ = (id) => document.getElementById(id);
+
+  function loadProfile(){ try { return JSON.parse(localStorage.getItem(LS_PROFILE)) || null; } catch { return null; } }
+  function saveProfile(p){ localStorage.setItem(LS_PROFILE, JSON.stringify(p)); refreshProfileUI(); }
+  function clearProfile(){ localStorage.removeItem(LS_PROFILE); refreshProfileUI(); }
+
+  function refreshProfileUI(){
+    const p = loadProfile();
+    const tag = $("profileStatus");
+    if (!p){
+      tag.textContent = "저장 안됨";
+      tag.className = "tag";
+      ["p_brand","p_owner","p_phone","p_email","p_insta"].forEach(k => $(k).value = "");
+      $("p_category").value = "";
+      return;
+    }
+    tag.textContent = "저장됨";
+    tag.className = "tag ok";
+    $("p_brand").value = p.brand || "";
+    $("p_owner").value = p.owner || "";
+    $("p_phone").value = p.phone || "";
+    $("p_email").value = p.email || "";
+    $("p_category").value = p.category || "";
+    $("p_insta").value = p.insta || "";
   }
 
-  document.getElementById("applyBtn").addEventListener("click", function(e){
-    e.preventDefault();
+  function loadDone(){ try { return JSON.parse(localStorage.getItem(LS_DONE)) || {}; } catch { return {}; } }
+  function setDone(eventId, val){
+    const d = loadDone();
+    if (val) d[eventId] = true; else delete d[eventId];
+    localStorage.setItem(LS_DONE, JSON.stringify(d));
+  }
+  function isDone(eventId){ return !!loadDone()[eventId]; }
+  function refreshDoneBadges(){
+    ["dt1","yi1"].forEach(id=>{
+      const el = document.getElementById("done-"+id);
+      if (!el) return;
+      el.style.display = isDone(id) ? "inline-block" : "none";
+    });
+  }
 
-    if(!selectedEvent){
-      alert("먼저 행사를 선택해 주세요");
+  // 행사 선택
+  let selected = null;
+  window.selectEvent = (id, name, date) => {
+    selected = { id, name, date };
+    $("selName").textContent = name;
+    $("selDate").textContent = date;
+    toast("행사를 선택했어요");
+  };
+
+  // 프로필 저장
+  $("saveProfile").addEventListener("click", () => {
+    const p = {
+      brand: $("p_brand").value.trim(),
+      owner: $("p_owner").value.trim(),
+      phone: $("p_phone").value.trim(),
+      email: $("p_email").value.trim(),
+      category: $("p_category").value.trim(),
+      insta: $("p_insta").value.trim()
+    };
+    if (!p.brand || !p.owner || !p.phone || !p.email || !p.category){
+      toast("필수 항목(상호/이름/전화/이메일/카테고리)을 채워주세요");
+      return;
+    }
+    saveProfile(p);
+    toast("내 정보 저장 완료 ✅");
+  });
+
+  $("clearProfile").addEventListener("click", () => {
+    clearProfile();
+    toast("저장 삭제됨");
+  });
+
+  // 신청완료 표시/해제
+  $("markDoneBtn").addEventListener("click", () => {
+    if (!selected){ toast("먼저 행사를 선택해 주세요"); return; }
+    const now = isDone(selected.id);
+    setDone(selected.id, !now);
+    refreshDoneBadges();
+    toast(!now ? "신청완료로 표시했어요 ✅" : "신청완료 표시를 해제했어요");
+  });
+
+  // 자동입력 지원하기
+  $("applyBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!selected){ toast("먼저 행사를 선택해 주세요"); return; }
+
+    const profile = loadProfile();
+    if (!profile){
+      toast("먼저 ‘내 정보 저장’을 해주세요 (한 번만 하면 됩니다)");
       return;
     }
 
-    // 신청완료 표시(로컬)
-    if(selectedEvent.includes("동탄")){
-      document.getElementById("done-1").style.display="inline";
-    }else{
-      document.getElementById("done-2").style.display="inline";
-    }
+    // 신청완료 표시(버튼 눌렀을 때)
+    setDone(selected.id, true);
+    refreshDoneBadges();
 
-    // 행사명 자동입력 URL
-    const url =
-      `${SELLER_FORM_BASE}?${ENTRY_EVENT_NAME}=` +
-      encodeURIComponent(selectedEvent);
+    const eventText = `${selected.name} (${selected.date})`;
 
-    // iOS에서 가장 안정적인 이동
-    window.location.href = url;
+    const params = new URLSearchParams();
+    params.set(ENTRY.event, eventText);
+    params.set(ENTRY.brand, profile.brand);
+    params.set(ENTRY.owner, profile.owner);
+    params.set(ENTRY.phone, profile.phone);
+    params.set(ENTRY.email, profile.email);
+    params.set(ENTRY.category, profile.category);
+    if (profile.insta) params.set(ENTRY.insta, profile.insta);
+
+    window.location.href = `${SELLER_FORM_BASE}?${params.toString()}`;
   });
-</script>
 
+  // 최초 UI
+  refreshProfileUI();
+  refreshDoneBadges();
+</script>
 </body>
 </html>
