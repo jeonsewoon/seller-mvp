@@ -5,41 +5,165 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0b0b0c">
+
+  <link rel="manifest" href="./manifest.json">
+
   <title>뜻밖의시장 | 셀러 모집</title>
 
   <style>
-    :root{--bg:#0b0b0c;--card:#16161a;--line:rgba(255,255,255,.10);--muted:#aaa;}
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:#f4f4f6}
-    .wrap{max-width:820px;margin:0 auto;padding:20px 16px 90px}
-    h1{font-size:22px;margin:0 0 6px}
+    :root{
+      --bg:#0b0b0c;
+      --card:#16161a;
+      --line:rgba(255,255,255,.12);
+      --muted:#b2b2b8;
+      --soft:rgba(255,255,255,.06);
+      --soft2:rgba(255,255,255,.10);
+    }
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+      background:var(--bg);
+      color:#f4f4f6;
+    }
+    .wrap{max-width:860px;margin:0 auto;padding:22px 16px 92px}
+    .heroTitle{
+      font-size:36px;
+      font-weight:900;
+      letter-spacing:-0.02em;
+      color:#fff;
+      margin:6px 0 8px;
+    }
+    .heroSub{color:var(--muted);font-size:14px;margin:0 0 14px;line-height:1.5}
+    .stepRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .stepTag{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:#d6d6db;
+    }
+    .card{
+      margin-top:14px;
+      padding:16px;
+      border-radius:18px;
+      background:var(--card);
+      border:1px solid var(--line);
+    }
     h2{font-size:16px;margin:0 0 10px}
-    .muted{color:var(--muted);font-size:13px;line-height:1.5}
-    .card{margin-top:14px;padding:16px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
-    .item{padding:14px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid var(--line);margin-bottom:10px;cursor:pointer}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .btn{display:inline-block;border:0;padding:12px 14px;border-radius:14px;background:#fff;color:#000;font-weight:900;text-decoration:none;cursor:pointer}
-    .btn.sub{background:rgba(255,255,255,.10);color:#fff;font-weight:700;border:1px solid rgba(255,255,255,.14)}
-    .tag{display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#cfcfd3;background:rgba(255,255,255,.05)}
-    .tag.ok{border-color:rgba(120,255,180,.22);color:rgba(170,255,205,.95);background:rgba(120,255,180,.06)}
-    label{display:block;font-size:12px;color:#cfcfd3;margin:10px 0 6px}
-    input, select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25);color:#fff;font-size:14px}
-    .grid{display:grid;grid-template-columns:1fr;gap:10px}
-    @media(min-width:720px){ .grid{grid-template-columns:1fr 1fr} }
+    .muted{color:var(--muted);font-size:13px;line-height:1.55}
     .hr{height:1px;background:var(--line);margin:14px 0}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:50;background:rgba(0,0,0,.78);
-      border:1px solid rgba(255,255,255,.16);padding:10px 12px;border-radius:999px;font-size:13px;display:none;max-width:92vw}
+    label{display:block;font-size:12px;color:#d0d0d6;margin:10px 0 6px}
+    input, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25);
+      color:#fff;
+      font-size:14px;
+      outline:none;
+    }
+    input::placeholder{color:rgba(255,255,255,.35)}
+    .grid{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:760px){ .grid{grid-template-columns:1fr 1fr} }
+
+    .item{
+      padding:14px;
+      border-radius:14px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      margin-bottom:10px;
+      cursor:pointer;
+      transition:transform .06s ease;
+    }
+    .item:active{transform:scale(.99)}
+    .item b{font-size:16px}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{
+      display:inline-block;
+      border:0;
+      padding:12px 14px;
+      border-radius:14px;
+      background:#fff;
+      color:#000;
+      font-weight:900;
+      text-decoration:none;
+      cursor:pointer;
+    }
+    .btn.sub{
+      background:var(--soft2);
+      color:#fff;
+      font-weight:700;
+      border:1px solid rgba(255,255,255,.16);
+    }
+    .tag{
+      display:inline-block;
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      color:#cfcfd3;
+      background:rgba(255,255,255,.05);
+      margin-left:8px;
+    }
+    .tag.ok{
+      border-color:rgba(120,255,180,.22);
+      color:rgba(170,255,205,.95);
+      background:rgba(120,255,180,.06);
+    }
+    .selectedBox{
+      padding:14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px dashed rgba(255,255,255,.22);
+    }
+    .toast{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:16px;
+      z-index:50;
+      background:rgba(0,0,0,.80);
+      border:1px solid rgba(255,255,255,.18);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      display:none;
+      max-width:92vw;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .warn{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,200,120,.22);
+      background:rgba(255,200,120,.06);
+      color:rgba(255,220,170,.95);
+      font-size:13px;
+      line-height:1.5;
+    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-    <h1>뜻밖의시장 셀러 모집</h1>
-    <div class="muted">① 내 정보 저장(1회) → ② 행사 선택 → ③ 지원(자동입력)</div>
+    <div class="heroTitle">뜻밖의시장</div>
+    <div class="heroSub">셀러 모집 · 메인 화면부터 단계별로 바로 지원까지 이어집니다.</div>
 
-    <!-- 1) 셀러 정보 저장 -->
+    <div class="stepRow">
+      <div class="stepTag">1) 내 정보 저장(1회)</div>
+      <div class="stepTag">2) 행사 선택</div>
+      <div class="stepTag">3) 셀러 신청(구글폼)</div>
+    </div>
+
+    <!-- 1) 프로필 저장 -->
     <div class="card">
-      <h2>기존 셀러 정보 (1회 저장)</h2>
-      <div class="muted">이 기기(아이폰/아이패드)에 저장됩니다. 다음 신청부터 자동으로 채워집니다.</div>
+      <h2>1) 기존 셀러 정보 (한 번만 저장)</h2>
+      <div class="muted">이 정보는 이 아이폰(기기)에 저장됩니다. 다음 신청부터 자동으로 채워져요.</div>
 
       <div class="hr"></div>
 
@@ -77,7 +201,7 @@
         </div>
       </div>
 
-      <div class="row" style="margin-top:14px">
+      <div class="btnRow">
         <button class="btn" id="saveProfile">내 정보 저장</button>
         <button class="btn sub" id="clearProfile">저장 삭제</button>
         <span class="tag" id="profileStatus">저장 안됨</span>
@@ -86,18 +210,18 @@
 
     <!-- 2) 행사 선택 -->
     <div class="card">
-      <h2>행사 선택</h2>
-      <div class="muted">행사를 선택한 뒤 “이 행사로 지원하기”를 누르세요.</div>
+      <h2>2) 행사 선택</h2>
+      <div class="muted">아래 행사 중 하나를 눌러 선택하세요.</div>
 
       <div class="hr"></div>
 
-      <div class="item" onclick="selectEvent('dt1','동탄역 롯데캐슬','2026-01-10 ~ 01-11')">
+      <div class="item" onclick="selectEvent('dt1','동탄역 롯데캐슬','2026-01-10 ~ 01-11','동탄')">
         <b>동탄역 롯데캐슬</b>
         <span class="tag ok" id="done-dt1" style="display:none">신청완료</span><br>
         <span class="muted">2026-01-10 ~ 01-11 · 동탄</span>
       </div>
 
-      <div class="item" onclick="selectEvent('yi1','용인 죽전 힐스테이트','2026-01-24 ~ 01-25')">
+      <div class="item" onclick="selectEvent('yi1','용인 죽전 힐스테이트','2026-01-24 ~ 01-25','용인')">
         <b>용인 죽전 힐스테이트</b>
         <span class="tag ok" id="done-yi1" style="display:none">신청완료</span><br>
         <span class="muted">2026-01-24 ~ 01-25 · 용인</span>
@@ -105,19 +229,20 @@
 
       <div class="hr"></div>
 
-      <div class="item" style="cursor:default">
+      <div class="selectedBox">
         <b id="selName">선택된 행사 없음</b><br>
-        <span class="muted" id="selDate"></span>
+        <span class="muted" id="selMeta"></span>
       </div>
 
-      <div class="row" style="margin-top:14px">
-        <button class="btn" id="applyBtn">이 행사로 지원하기 (자동입력)</button>
+      <div class="btnRow">
+        <button class="btn" id="applyBtn">3) 이 행사로 지원하기</button>
         <button class="btn sub" id="markDoneBtn">신청완료 표시/해제</button>
       </div>
 
-      <div class="muted" style="margin-top:10px">
-        * “신청완료” 표시는 이 기기에서만 저장됩니다(서버 없음).<br>
-        * MVP 단계에서는 가장 안정적인 방식입니다.
+      <div class="warn">
+        ✅ 지금 단계 목표: “메인 UI가 그대로 보이고, 단계가 흐트러지지 않는지” 확인<br>
+        - 자동입력(entry)은 다음 단계에서 연결해도 됩니다.<br>
+        - 우선은 버튼 누르면 구글폼이 정상으로 열리면 성공이에요.
       </div>
     </div>
   </div>
@@ -125,43 +250,42 @@
   <div class="toast" id="toast"></div>
 
 <script>
-  /***********************
-   * ✅ 전세운님 수정 영역 (2개)
-   ***********************/
-  // 1) 구글폼 viewform 주소
+  /***************
+   * 전세운님이 바꿀 곳: 구글폼 주소 1개만!
+   ***************/
   const SELLER_FORM_BASE =
     "https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform";
 
-  // 2) 구글폼 각 질문의 entry 번호 (꼭 실제 값으로 바꿔야 자동입력 됨)
-  const ENTRY = {
-    event:    "entry.111111111", // 8. 지원 행사
-    brand:    "entry.222222222", // 1. 상호명/브랜드명
-    owner:    "entry.333333333", // 2. 대표자 이름
-    phone:    "entry.444444444", // 3. 연락처
-    email:    "entry.555555555", // 4. 이메일
-    category: "entry.666666666", // 5. 판매 카테고리
-    insta:    "entry.777777777"  // 6. 인스타(선택)
-  };
+  // (다음 단계) 자동입력 entry 연결은 아직 안 붙여도 됨
+  // const ENTRY = { event:"entry.123", brand:"entry.456", ... };
 
-  /***********************
-   * 내부 로직
-   ***********************/
-  const LS_PROFILE = "um_seller_profile_v1";
-  const LS_DONE = "um_done_events_v1";
+  /***************
+   * 내부 로직 (건드릴 필요 없음)
+   ***************/
+  const LS_PROFILE = "um_profile_v1";
+  const LS_DONE = "um_done_v1";
 
-  const toastEl = document.getElementById("toast");
+  const $ = (id) => document.getElementById(id);
+  const toastEl = $("toast");
   const toast = (msg) => {
     toastEl.textContent = msg;
     toastEl.style.display = "block";
     clearTimeout(window.__t);
-    window.__t = setTimeout(()=> toastEl.style.display="none", 2200);
+    window.__t = setTimeout(()=> toastEl.style.display="none", 2000);
   };
-  const $ = (id) => document.getElementById(id);
 
-  function loadProfile(){ try { return JSON.parse(localStorage.getItem(LS_PROFILE)) || null; } catch { return null; } }
-  function saveProfile(p){ localStorage.setItem(LS_PROFILE, JSON.stringify(p)); refreshProfileUI(); }
-  function clearProfile(){ localStorage.removeItem(LS_PROFILE); refreshProfileUI(); }
-
+  function loadProfile(){
+    try { return JSON.parse(localStorage.getItem(LS_PROFILE)) || null; }
+    catch { return null; }
+  }
+  function saveProfile(p){
+    localStorage.setItem(LS_PROFILE, JSON.stringify(p));
+    refreshProfileUI();
+  }
+  function clearProfile(){
+    localStorage.removeItem(LS_PROFILE);
+    refreshProfileUI();
+  }
   function refreshProfileUI(){
     const p = loadProfile();
     const tag = $("profileStatus");
@@ -183,12 +307,13 @@
   }
 
   function loadDone(){ try { return JSON.parse(localStorage.getItem(LS_DONE)) || {}; } catch { return {}; } }
-  function setDone(eventId, val){
+  function isDone(id){ return !!loadDone()[id]; }
+  function setDone(id, val){
     const d = loadDone();
-    if (val) d[eventId] = true; else delete d[eventId];
+    if (val) d[id] = true; else delete d[id];
     localStorage.setItem(LS_DONE, JSON.stringify(d));
+    refreshDoneBadges();
   }
-  function isDone(eventId){ return !!loadDone()[eventId]; }
   function refreshDoneBadges(){
     ["dt1","yi1"].forEach(id=>{
       const el = document.getElementById("done-"+id);
@@ -197,16 +322,14 @@
     });
   }
 
-  // 행사 선택
   let selected = null;
-  window.selectEvent = (id, name, date) => {
-    selected = { id, name, date };
+  window.selectEvent = (id, name, date, area) => {
+    selected = { id, name, date, area };
     $("selName").textContent = name;
-    $("selDate").textContent = date;
+    $("selMeta").textContent = `${date} · ${area}`;
     toast("행사를 선택했어요");
   };
 
-  // 프로필 저장
   $("saveProfile").addEventListener("click", () => {
     const p = {
       brand: $("p_brand").value.trim(),
@@ -229,45 +352,25 @@
     toast("저장 삭제됨");
   });
 
-  // 신청완료 표시/해제
   $("markDoneBtn").addEventListener("click", () => {
     if (!selected){ toast("먼저 행사를 선택해 주세요"); return; }
-    const now = isDone(selected.id);
-    setDone(selected.id, !now);
-    refreshDoneBadges();
-    toast(!now ? "신청완료로 표시했어요 ✅" : "신청완료 표시를 해제했어요");
+    setDone(selected.id, !isDone(selected.id));
+    toast(isDone(selected.id) ? "신청완료 표시 ✅" : "신청완료 해제");
   });
 
-  // 자동입력 지원하기
   $("applyBtn").addEventListener("click", (e) => {
     e.preventDefault();
     if (!selected){ toast("먼저 행사를 선택해 주세요"); return; }
+    const p = loadProfile();
+    if (!p){ toast("먼저 1) 내 정보 저장을 해주세요"); return; }
 
-    const profile = loadProfile();
-    if (!profile){
-      toast("먼저 ‘내 정보 저장’을 해주세요 (한 번만 하면 됩니다)");
-      return;
-    }
-
-    // 신청완료 표시(버튼 눌렀을 때)
+    // MVP 1단계: 우선 폼이 열리면 성공 (자동입력은 다음 단계)
     setDone(selected.id, true);
-    refreshDoneBadges();
-
-    const eventText = `${selected.name} (${selected.date})`;
-
-    const params = new URLSearchParams();
-    params.set(ENTRY.event, eventText);
-    params.set(ENTRY.brand, profile.brand);
-    params.set(ENTRY.owner, profile.owner);
-    params.set(ENTRY.phone, profile.phone);
-    params.set(ENTRY.email, profile.email);
-    params.set(ENTRY.category, profile.category);
-    if (profile.insta) params.set(ENTRY.insta, profile.insta);
-
-    window.location.href = `${SELLER_FORM_BASE}?${params.toString()}`;
+    toast("구글폼으로 이동합니다…");
+    window.location.href = SELLER_FORM_BASE;
   });
 
-  // 최초 UI
+  // 초기화
   refreshProfileUI();
   refreshDoneBadges();
 </script>
