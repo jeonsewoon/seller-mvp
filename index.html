@@ -7,13 +7,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>뜻밖의시장 | 셀러 모집</title>
 
-  <!-- Leaflet (지도) -->
+  <!-- 지도 -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- 차트 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
   <style>
     :root{
-      --bg:#0b0b0c; --card:#16161a;
+      --bg:#0b0b0c; --card:#16161a; --card2:#101013;
       --text:#f4f4f6; --muted:#a8a8ad; --line:rgba(255,255,255,.10);
       --radius:16px;
     }
@@ -29,12 +32,12 @@
       backdrop-filter: blur(10px);
       border-bottom:1px solid rgba(255,255,255,.08);
     }
-    .topin{max-width:980px;margin:0 auto;padding:14px 16px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .topin{max-width:1080px;margin:0 auto;padding:14px 16px;display:flex;justify-content:space-between;gap:10px;align-items:center}
     .brand b{display:block;font-size:15px;letter-spacing:-.2px}
     .brand span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
-    .wrap{max-width:980px;margin:0 auto;padding:18px 16px 90px}
-    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;margin-top:14px}
-    @media(max-width:920px){.grid{grid-template-columns:1fr}}
+    .wrap{max-width:1080px;margin:0 auto;padding:18px 16px 90px}
+    .grid{display:grid;grid-template-columns:1.12fr .88fr;gap:14px;margin-top:14px}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
     .card{
       background:var(--card);
       border:1px solid var(--line);
@@ -44,6 +47,7 @@
     h1{font-size:18px;margin:0 0 6px}
     h2{font-size:15px;margin:0 0 10px}
     .muted{color:var(--muted);font-size:13px;line-height:1.5}
+    .small{font-size:12px;color:var(--muted);line-height:1.55}
     .hr{height:1px;background:var(--line);margin:14px 0}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .btn{
@@ -56,16 +60,10 @@
       cursor:pointer;
       font-size:14px;
       text-decoration:none;
+      white-space:nowrap;
     }
     .btn.primary{background:#fff;color:#000;font-weight:900}
     .btn.ghost{border:1px solid rgba(255,255,255,.16);background:transparent}
-    .item{
-      padding:12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.16);
-      cursor:pointer;
-    }
     .tag{
       display:inline-block;
       font-size:11px;
@@ -76,6 +74,15 @@
       color:var(--muted);
       white-space:nowrap;
     }
+    .tag.ok{border-color:rgba(120,255,180,.22);color:rgba(170,255,205,.95);background:rgba(120,255,180,.06)}
+    .tag.warn{border-color:rgba(255,210,120,.22);color:rgba(255,230,170,.95);background:rgba(255,210,120,.06)}
+    .item{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.16);
+      cursor:pointer;
+    }
     #map{
       height:420px;
       border-radius:14px;
@@ -83,6 +90,18 @@
       border:1px solid rgba(255,255,255,.10);
       margin-top:10px;
     }
+    .pillbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .pill{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      cursor:pointer;
+      user-select:none;
+    }
+    .pill.active{background:rgba(255,255,255,.14);color:var(--text)}
     .toast{
       position:fixed; left:50%; transform:translateX(-50%);
       bottom:16px; z-index:50;
@@ -94,11 +113,10 @@
       display:none;
       max-width:92vw;
     }
-    .small{font-size:12px;color:var(--muted)}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
     .kv{display:grid;grid-template-columns:110px 1fr;gap:6px 10px;margin-top:10px}
     .kv .k{color:var(--muted);font-size:13px}
     .kv .v{font-size:13px}
+    canvas{max-width:100%}
   </style>
 </head>
 
@@ -107,71 +125,83 @@
     <div class="topin">
       <div class="brand">
         <b>뜻밖의시장 · 셀러 모집</b>
-        <span>지도에서 행사 위치 확인 → 구글폼으로 지원</span>
+        <span>지도에서 행사 확인 → 지원(구글폼) → 신청완료 표시</span>
       </div>
-      <span class="tag" id="geocodeStatus">지도 로딩중…</span>
+      <span class="tag" id="statusTag">로딩중…</span>
     </div>
   </div>
 
   <div class="wrap">
     <div class="grid">
-      <!-- LEFT: Map + Event list -->
+      <!-- LEFT -->
       <section class="card">
         <h1>행사 지도</h1>
-        <div class="muted">핀을 누르면 <b>아파트명 + 행사날짜</b>가 뜨고, “이 행사로 지원” 버튼으로 지원폼이 열립니다.</div>
+        <div class="muted">핀을 누르면 <b>아파트명 + 날짜</b>가 보이고, “이 행사로 지원”을 누르면 구글폼이 열립니다.</div>
+
+        <div class="pillbar" id="filters"></div>
         <div id="map"></div>
 
         <div class="hr"></div>
-        <h2>행사 리스트 (5곳)</h2>
-        <div class="muted">리스트를 눌러도 동일하게 해당 행사로 지원폼이 열립니다.</div>
+        <h2>행사 리스트</h2>
+        <div class="muted">✅ 신청완료 배지는 “지원하기 버튼을 눌러 폼을 열면” 자동으로 표시됩니다. (이 아이폰에 저장)</div>
         <div class="hr"></div>
-
         <div id="eventList" class="row" style="flex-direction:column;align-items:stretch;gap:10px"></div>
 
         <div class="hr"></div>
-        <div class="small">
-          주소는 “주소 → 좌표 자동 변환(지오코딩)” 방식이라 첫 로딩에 몇 초 걸릴 수 있어요.<br>
-          주소가 너무 뭉뚱그려져 있으면 핀이 안 찍힐 수 있어요. (아파트명 + 도로명 형태 추천)
+        <h2>참여팀수 현황</h2>
+        <div class="muted">행사별 총 참여(또는 모집 목표) 팀수 막대그래프 + 종목(카테고리) 수를 표시합니다.</div>
+        <div class="hr"></div>
+        <canvas id="barChart" height="140"></canvas>
+        <div class="small" style="margin-top:10px">
+          * 지금은 EVENTS에 숫자를 넣는 방식(가장 확실).<br>
+          * 다음 단계에서 구글시트 “요약 데이터”로 자동 연동도 가능합니다.
         </div>
       </section>
 
-      <!-- RIGHT: Apply -->
+      <!-- RIGHT -->
       <section class="card" id="applyPanel">
         <h1>셀러 지원</h1>
         <div class="muted">운영용 실전 버전: 지원 데이터는 <b>구글폼/구글시트</b>로 저장됩니다.</div>
 
         <div class="hr"></div>
 
-        <div class="item" id="selectedEventBox" style="cursor:default">
+        <div class="item" id="selectedBox" style="cursor:default">
           <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
             <div>
               <b id="selName">행사를 선택해 주세요</b>
               <div class="small" id="selDate"></div>
               <div class="small" id="selAddr"></div>
             </div>
-            <span class="tag" id="selTag">선택 대기</span>
+            <span class="tag" id="selBadge">선택 대기</span>
           </div>
+
           <div class="hr"></div>
           <div class="kv">
-            <div class="k">지원 방법</div>
-            <div class="v">아래 버튼을 눌러 구글폼을 제출하면 접수 완료</div>
-            <div class="k">소요 시간</div>
-            <div class="v">약 30초 (필수 4개 항목)</div>
+            <div class="k">참여 팀수</div>
+            <div class="v"><span id="selTeams">-</span> 팀</div>
+            <div class="k">종목 수</div>
+            <div class="v"><span id="selCats">-</span> 종목</div>
+          </div>
+
+          <div class="hr"></div>
+          <div class="small">
+            신청완료는 “지원하기를 눌러 폼을 연 시점”에 표시됩니다.<br>
+            (구글폼 제출 완료까지 100% 확인하려면 서버/연동이 필요하지만, MVP 운영에선 이 방식이 제일 안정적입니다.)
           </div>
         </div>
 
         <div class="row" style="margin-top:14px">
           <a class="btn primary" id="applyBtn" href="#" target="_blank" rel="noopener">이 행사로 지원하기</a>
-          <button class="btn ghost" id="copyEvent" type="button">행사명 복사</button>
+          <button class="btn ghost" id="toggleDone" type="button">신청완료 해제</button>
         </div>
 
         <div class="hr"></div>
 
-        <h2>궁금증 / 문의</h2>
+        <h2>문의 / 궁금증</h2>
         <div class="muted">문의는 별도 폼으로 받는 게 가장 안정적입니다.</div>
         <div class="row" style="margin-top:12px">
-          <a class="btn" id="questionBtn" href="#" target="_blank" rel="noopener">문의/궁금증 남기기</a>
-          <button class="btn ghost" type="button" id="copyEmail">이메일 복사</button>
+          <a class="btn" id="questionBtn" href="#" target="_blank" rel="noopener">문의 남기기</a>
+          <button class="btn ghost" id="copyEmail" type="button">이메일 복사</button>
         </div>
         <div class="small" style="margin-top:10px">
           운영자 이메일: <span class="mono" id="adminEmailText">marketfindout@gmail.com</span>
@@ -184,29 +214,32 @@
 
   <script>
     // ============================
-    // ✅ 1) 여기만 바꾸면 됩니다
+    // ✅ 전세운님이 수정할 곳(3개)
     // ============================
 
-    // (A) 셀러 지원 구글폼 "미리보기(viewform)" URL을 넣으세요
-    const SELLER_FORM_BASE = "여기에_구글폼_미리보기_URL"; 
+    // 1) 셀러 지원 구글폼 "미리보기(viewform)" URL
+    const SELLER_FORM_BASE = "여기에_구글폼_미리보기_URL";
     // 예: "https://docs.google.com/forms/d/e/FORM_ID/viewform"
 
-    // (B) 문의/궁금증 구글폼 URL (없으면 # 유지)
-    const QUESTION_FORM_URL = "#"; // 예: https://docs.google.com/forms/d/e/FORM_ID/viewform
+    // 2) 문의 구글폼 URL
+    const QUESTION_FORM_URL = "#"; // 예: "https://docs.google.com/forms/d/e/FORM_ID/viewform"
 
-    // (C) 지도에 꽂을 행사 5곳 (실제 주소/아파트명/날짜로 수정)
+    // 3) 행사 5곳 + 숫자(팀수/종목수)
     const EVENTS = [
-      { name:"동탄역 롯데캐슬", date:"2026-01-10 ~ 2026-01-11", address:"경기도 화성시 동탄역로 160 동탄역 롯데캐슬" },
-      { name:"동탄2 더샵 센트럴시티", date:"2026-01-24 ~ 2026-01-25", address:"경기도 화성시 동탄대로 635 더샵 센트럴시티" },
-      { name:"동탄 호수공원 인근 아파트", date:"2026-02-07 ~ 2026-02-08", address:"경기도 화성시 동탄순환대로 10 동탄호수공원" },
-      { name:"용인 죽전 힐스테이트", date:"2026-02-14 ~ 2026-02-15", address:"경기도 용인시 수지구 죽전로 150 힐스테이트" },
-      { name:"용인 동백 호수마을", date:"2026-02-21 ~ 2026-02-22", address:"경기도 용인시 기흥구 동백중앙로 191" }
+      { id:"dt1", area:"동탄", name:"동탄역 롯데캐슬", date:"2026-01-10 ~ 2026-01-11", address:"경기도 화성시 동탄역로 160 동탄역 롯데캐슬", teams: 18, categories: 6 },
+      { id:"dt2", area:"동탄", name:"동탄2 더샵 센트럴시티", date:"2026-01-24 ~ 2026-01-25", address:"경기도 화성시 동탄대로 635 더샵 센트럴시티", teams: 22, categories: 7 },
+      { id:"dt3", area:"동탄", name:"동탄 호수공원 인근", date:"2026-02-07 ~ 2026-02-08", address:"경기도 화성시 동탄순환대로 10 동탄호수공원", teams: 16, categories: 5 },
+      { id:"yi1", area:"용인", name:"용인 죽전 힐스테이트", date:"2026-02-14 ~ 2026-02-15", address:"경기도 용인시 수지구 죽전로 150 힐스테이트", teams: 20, categories: 6 },
+      { id:"yi2", area:"용인", name:"용인 동백 호수마을", date:"2026-02-21 ~ 2026-02-22", address:"경기도 용인시 기흥구 동백중앙로 191", teams: 14, categories: 5 }
     ];
 
     // ============================
     // 내부 기능 (수정 불필요)
     // ============================
+    const LS_DONE = "um_done_events_v1"; // { [eventId]: true }
     const $ = (id) => document.getElementById(id);
+    const statusTag = $("statusTag");
+
     const toast = (msg) => {
       const t = $("toast");
       t.textContent = msg;
@@ -214,53 +247,103 @@
       clearTimeout(window.__t);
       window.__t = setTimeout(()=> t.style.display = "none", 2200);
     };
-    function escapeHtml(s){
-      return String(s ?? "").replace(/[&<>"']/g, m => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
+
+    const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[m]));
+
+    const loadDone = () => {
+      try { return JSON.parse(localStorage.getItem(LS_DONE)) || {}; }
+      catch { return {}; }
+    };
+    const saveDone = (obj) => localStorage.setItem(LS_DONE, JSON.stringify(obj));
+    const isDone = (id) => !!loadDone()[id];
+
+    function setDone(id, val){
+      const d = loadDone();
+      if (val) d[id] = true;
+      else delete d[id];
+      saveDone(d);
     }
 
-    // ------- Event select + form link -------
-    let selectedEvent = null;
-
-    function buildPrefilledFormUrl(e){
-      // 구글폼 사전입력(entry.XXXX)은 폼마다 다르니
-      // MVP에서는 "행사명 복사" 버튼을 함께 둡니다.
-      // (원하면 다음 단계에서 entry 코드로 자동 입력까지 해드림)
-      return SELLER_FORM_BASE;
+    // ---- Filters ----
+    let activeArea = "전체";
+    function renderFilters(){
+      const areas = ["전체", ...Array.from(new Set(EVENTS.map(e => e.area)))];
+      const box = $("filters");
+      box.innerHTML = "";
+      areas.forEach(a => {
+        const p = document.createElement("div");
+        p.className = "pill" + (a === activeArea ? " active" : "");
+        p.textContent = a;
+        p.onclick = () => {
+          activeArea = a;
+          renderFilters();
+          renderEventList();
+          renderMarkers();
+          updateChart();
+        };
+        box.appendChild(p);
+      });
     }
+
+    const filteredEvents = () => activeArea === "전체" ? EVENTS : EVENTS.filter(e => e.area === activeArea);
+
+    // ---- Selected ----
+    let selected = null;
 
     function selectEvent(e){
-      selectedEvent = e;
-
+      selected = e;
       $("selName").textContent = e.name;
       $("selDate").textContent = e.date;
       $("selAddr").textContent = e.address;
-      $("selTag").textContent = "선택됨";
+      $("selTeams").textContent = String(e.teams ?? "-");
+      $("selCats").textContent = String(e.categories ?? "-");
 
-      const url = buildPrefilledFormUrl(e);
-      $("applyBtn").href = url;
+      const done = isDone(e.id);
+      $("selBadge").textContent = done ? "신청완료" : "선택됨";
+      $("selBadge").className = "tag " + (done ? "ok" : "");
+      $("toggleDone").textContent = done ? "신청완료 해제" : "신청완료로 표시";
 
-      // 모바일 UX: 선택하면 오른쪽 지원 영역으로 이동
+      $("applyBtn").href = SELLER_FORM_BASE || "#";
+
       $("applyPanel").scrollIntoView({behavior:"smooth", block:"start"});
-      toast("행사 선택됨. 이제 ‘이 행사로 지원하기’를 누르세요.");
+      toast("행사 선택됨");
+      renderEventList(); // 배지 업데이트
+      updateChart(); // 강조(선택 기준)
     }
 
-    $("copyEvent").addEventListener("click", async () => {
-      if (!selectedEvent){
+    // ---- Apply button behavior (mark done when open form) ----
+    $("applyBtn").addEventListener("click", (ev) => {
+      if (!selected){
+        ev.preventDefault();
         toast("먼저 행사를 선택해 주세요");
         return;
       }
-      const text = `${selectedEvent.name} (${selectedEvent.date})`;
-      try{
-        await navigator.clipboard.writeText(text);
-        toast("행사명 복사됨 (구글폼 첫 질문에 붙여넣기)");
-      }catch{
-        toast("복사 실패(브라우저 권한)");
+      if (!SELLER_FORM_BASE || SELLER_FORM_BASE.includes("여기에_구글폼")){
+        ev.preventDefault();
+        toast("SELLER_FORM_BASE에 구글폼 URL을 먼저 넣어주세요");
+        return;
       }
+
+      // ✅ 가장 확실한 MVP 방식: "지원하기 버튼을 눌렀다" = 완료 표시
+      setDone(selected.id, true);
+      $("selBadge").textContent = "신청완료";
+      $("selBadge").className = "tag ok";
+      $("toggleDone").textContent = "신청완료 해제";
+      renderEventList();
+      toast("신청완료로 표시했어요 ✅ (폼 제출까지 진행해 주세요)");
     });
 
-    // ------- Q&A button + email copy -------
+    $("toggleDone").addEventListener("click", () => {
+      if (!selected){ toast("먼저 행사를 선택해 주세요"); return; }
+      const done = isDone(selected.id);
+      setDone(selected.id, !done);
+      selectEvent(selected); // UI 갱신
+      toast(done ? "신청완료 표시를 해제했어요" : "신청완료로 표시했어요 ✅");
+    });
+
+    // ---- Q&A ----
     $("questionBtn").href = QUESTION_FORM_URL;
     $("copyEmail").addEventListener("click", async () => {
       const email = $("adminEmailText").textContent.trim();
@@ -272,11 +355,12 @@
       }
     });
 
-    // ------- Render event list -------
+    // ---- Event list ----
     function renderEventList(){
-      const box = $("eventList");
-      box.innerHTML = "";
-      EVENTS.forEach((e) => {
+      const list = $("eventList");
+      list.innerHTML = "";
+      filteredEvents().forEach(e => {
+        const done = isDone(e.id);
         const div = document.createElement("div");
         div.className = "item";
         div.innerHTML = `
@@ -285,18 +369,18 @@
               <b>${escapeHtml(e.name)}</b>
               <div class="small">${escapeHtml(e.date)}</div>
               <div class="small">${escapeHtml(e.address)}</div>
+              <div class="small">참여팀수 <b>${escapeHtml(e.teams)}</b> · 종목 <b>${escapeHtml(e.categories)}</b></div>
             </div>
-            <span class="tag">선택</span>
+            <span class="tag ${done ? "ok" : ""}">${done ? "신청완료" : "선택"}</span>
           </div>
         `;
-        div.addEventListener("click", () => selectEvent(e));
-        box.appendChild(div);
+        div.onclick = () => selectEvent(e);
+        list.appendChild(div);
       });
     }
 
-    // ------- Map + geocoding -------
-    const statusTag = $("geocodeStatus");
-
+    // ---- Map + geocoding ----
+    let map, markersLayer;
     async function geocodeAddress(address){
       const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(address)}`;
       const res = await fetch(url, {headers: {"Accept":"application/json"}});
@@ -306,47 +390,72 @@
     }
 
     async function initMap(){
-      const map = L.map("map").setView([37.22, 127.10], 11);
+      map = L.map("map").setView([37.22, 127.10], 11);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap"
       }).addTo(map);
 
-      statusTag.textContent = "주소 좌표 변환중…";
+      markersLayer = L.layerGroup().addTo(map);
 
+      statusTag.textContent = "주소 좌표 변환중…";
+      await renderMarkers();
+    }
+
+    async function renderMarkers(){
+      if (!markersLayer) return;
+      markersLayer.clearLayers();
+
+      const evs = filteredEvents();
       let ok = 0;
 
-      for (let i=0; i<EVENTS.length; i++){
-        const e = EVENTS[i];
+      for (let i=0; i<evs.length; i++){
+        const e = evs[i];
         try{
-          // 과도한 요청 방지: 약간의 텀
-          await new Promise(r => setTimeout(r, 350));
-
+          await new Promise(r => setTimeout(r, 350)); // 요청 텀
           const pos = await geocodeAddress(e.address);
           if (!pos) continue;
-
           ok++;
 
+          const done = isDone(e.id);
           const popupHtml = `
-            <div style="min-width:210px">
+            <div style="min-width:220px">
               <b>${escapeHtml(e.name)}</b><br/>
               <span style="font-size:12px;color:#666">${escapeHtml(e.date)}</span><br/>
               <span style="font-size:12px;color:#666">${escapeHtml(e.address)}</span><br/>
-              <div style="margin-top:10px">
-                <button id="apply-${i}" style="border:0;border-radius:10px;padding:10px 12px;background:#111;color:#fff;cursor:pointer">
+              <div style="margin-top:8px;font-size:12px;color:#666">
+                참여팀수 <b>${escapeHtml(e.teams)}</b> · 종목 <b>${escapeHtml(e.categories)}</b>
+                ${done ? `<div style="margin-top:6px;color:#0a0">✅ 신청완료 표시됨</div>` : ``}
+              </div>
+              <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+                <button id="pick-${e.id}" style="border:0;border-radius:10px;padding:10px 12px;background:#111;color:#fff;cursor:pointer">
                   이 행사로 지원
+                </button>
+                <button id="done-${e.id}" style="border:1px solid #333;border-radius:10px;padding:10px 12px;background:transparent;color:#111;cursor:pointer">
+                  ${done ? "완료 해제" : "완료 표시"}
                 </button>
               </div>
             </div>
           `;
 
-          const marker = L.marker([pos.lat, pos.lng]).addTo(map).bindPopup(popupHtml);
+          const marker = L.marker([pos.lat, pos.lng]).addTo(markersLayer).bindPopup(popupHtml);
 
           marker.on("popupopen", () => {
-            const btn = document.getElementById(`apply-${i}`);
-            if (btn){
-              btn.onclick = () => {
+            const pickBtn = document.getElementById(`pick-${e.id}`);
+            const doneBtn = document.getElementById(`done-${e.id}`);
+
+            if (pickBtn){
+              pickBtn.onclick = () => {
                 selectEvent(e);
                 marker.closePopup();
+              };
+            }
+            if (doneBtn){
+              doneBtn.onclick = () => {
+                setDone(e.id, !isDone(e.id));
+                if (selected && selected.id === e.id) selectEvent(e);
+                renderEventList();
+                marker.closePopup();
+                toast(isDone(e.id) ? "신청완료로 표시했어요 ✅" : "신청완료 해제했어요");
               };
             }
           });
@@ -356,19 +465,60 @@
         }
       }
 
-      if (ok > 0){
-        statusTag.textContent = `핀 ${ok}개 표시됨`;
-        // 첫 번째 행사 기본 선택(원하면 제거 가능)
-        selectEvent(EVENTS[0]);
-      } else {
-        statusTag.textContent = "주소 확인 필요";
-        toast("주소를 찾지 못했어요. EVENTS의 address를 더 정확히 수정해 주세요.");
-      }
+      if (ok > 0) statusTag.textContent = `핀 ${ok}개 표시됨`;
+      else statusTag.textContent = "주소 확인 필요";
     }
 
-    // Init
+    // ---- Chart ----
+    let chart;
+    function updateChart(){
+      const evs = filteredEvents();
+      const labels = evs.map(e => e.name.length > 10 ? e.name.slice(0,10)+"…" : e.name);
+      const dataTeams = evs.map(e => Number(e.teams ?? 0));
+
+      const ctx = document.getElementById("barChart");
+      if (!ctx) return;
+
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{
+            label: "참여팀수(또는 목표)",
+            data: dataTeams
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: true },
+            tooltip: {
+              callbacks: {
+                afterLabel: (c) => {
+                  const e = evs[c.dataIndex];
+                  return e ? `종목 수: ${e.categories}` : "";
+                }
+              }
+            }
+          },
+          scales: {
+            x: { ticks: { color: "#a8a8ad" }, grid: { color: "rgba(255,255,255,.06)" } },
+            y: { ticks: { color: "#a8a8ad" }, grid: { color: "rgba(255,255,255,.06)" } }
+          }
+        }
+      });
+    }
+
+    // ---- Init ----
+    renderFilters();
     renderEventList();
-    initMap();
+    updateChart();
+    initMap().then(() => {
+      // 기본 선택: 첫 행사
+      if (EVENTS[0]) selectEvent(EVENTS[0]);
+    });
   </script>
 </body>
 </html>
