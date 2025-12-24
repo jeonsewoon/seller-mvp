@@ -60,7 +60,7 @@
 <body>
   <div class="wrap">
     <div class="heroTitle">뜻밖의시장</div>
-    <div class="heroSub">지도에서 위치 확인 → 행사 선택 → 셀러 지원</div>
+    <div class="heroSub">지도에서 위치 확인 → 행사 선택 → 셀러 지원 (행사명 자동입력)</div>
 
     <!-- 지도 -->
     <div class="card">
@@ -80,7 +80,7 @@
     <!-- 행사 목록 + 지원 -->
     <div class="card">
       <h2>출점 공고</h2>
-      <div class="muted">행사를 눌러 선택하세요.</div>
+      <div class="muted">행사를 눌러 선택하세요. 선택 후 “지원하기”를 누르면 구글폼에 행사명이 자동입력됩니다.</div>
 
       <div class="hr"></div>
       <div id="eventList"></div>
@@ -93,7 +93,7 @@
       </div>
 
       <div class="btnRow">
-        <!-- JS가 죽어도 폼은 열리게 링크 백업 포함 -->
+        <!-- ✅ JS가 죽어도 폼은 열리게 “기본 폼 링크”를 href로 유지 -->
         <a class="btn" id="applyBtn"
            href="https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform">
           이 행사로 지원하기
@@ -109,7 +109,7 @@
     <!-- 프로필 저장 -->
     <div class="card">
       <h2>기존 셀러 정보 (1회 저장)</h2>
-      <div class="muted">다음 단계에서 자동입력(entry)을 붙이면 구글폼이 거의 자동으로 채워집니다.</div>
+      <div class="muted">다음 단계에서 상호/전화번호 등도 entry를 찾으면 자동입력까지 연결할 수 있어요.</div>
       <div class="hr"></div>
 
       <div class="grid">
@@ -142,9 +142,12 @@
   <div class="toast" id="toast"></div>
 
 <script>
-  /*********** 전세운님 수정(필수 1개) ***********/
+  /*********** 구글폼 기본 링크 ***********/
   const SELLER_FORM_BASE =
     "https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform";
+
+  /*********** ✅ 행사명 자동입력 entry (전세운님이 찾아준 값) ***********/
+  const ENTRY_EVENT_NAME = "entry.1498135098";
 
   /*********** 행사 데이터 (여기 숫자만 바꾸면 그래프 자동 반영) ***********/
   const EVENTS = [
@@ -246,7 +249,6 @@
       const cur = Number(ev.current || 0);
       const cap = Math.max(1, Number(ev.capacity || 1));
       const pct = Math.min(100, Math.round((cur / cap) * 100));
-
       const row = document.createElement("div");
       row.className = "barRow";
       row.innerHTML = `
@@ -281,6 +283,14 @@
     window.__pick = (id)=>{ selectEventById(id); map.closePopup(); };
   }
 
+  function buildPrefilledFormUrl(ev){
+    // 행사명을 폼에 자동입력: "행사명 (날짜)"
+    const eventValue = `${ev.name} (${ev.date})`;
+    const qs = `${ENTRY_EVENT_NAME}=${encodeURIComponent(eventValue)}`;
+    // usp=pp_url 은 없어도 되지만, 구글폼에서 “미리채움” 모드처럼 처리돼 안정적
+    return `${SELLER_FORM_BASE}?usp=pp_url&${qs}`;
+  }
+
   // 버튼들
   $("saveProfile").addEventListener("click", () => {
     const p = {
@@ -310,14 +320,18 @@
     toast(isDone(selected.id) ? "신청완료 표시 ✅" : "신청완료 해제");
   });
 
-  // ✅ JS가 죽어도 폼은 열리지만, iOS에서 더 안정적으로 같은 화면 이동 강제
+  // ✅ 핵심: 지원하기 클릭 시 “행사명 자동입력” 링크로 이동
   $("applyBtn").addEventListener("click", (e) => {
     e.preventDefault();
+
     if (!selected){ toast("먼저 행사를 선택해 주세요"); return; }
     if (!loadProfile()){ toast("먼저 ‘기존 셀러 정보’를 저장해 주세요"); return; }
+
     setDone(selected.id, true);
-    toast("구글폼으로 이동합니다…");
-    window.location.href = SELLER_FORM_BASE; // 다음 단계에서 entry 자동입력으로 업그레이드
+
+    const url = buildPrefilledFormUrl(selected);
+    toast("구글폼으로 이동합니다…(행사명 자동입력)");
+    window.location.href = url;
   });
 
   // 초기 실행
