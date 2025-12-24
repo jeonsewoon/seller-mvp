@@ -6,126 +6,86 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0b0b0c">
-
   <title>뜻밖의시장 | 셀러 모집</title>
 
-  <!-- ✅ Leaflet: 반드시 head에서 로드 -->
+  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     :root{
-      --bg:#0b0b0c;
-      --card:#16161a;
-      --soft:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.12);
-      --muted:#b2b2b8;
+      --bg:#0b0b0c; --card:#16161a; --soft:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.12); --muted:#b2b2b8;
     }
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-      background:var(--bg);
-      color:#f4f4f6;
-    }
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:#f4f4f6}
     .wrap{max-width:860px;margin:0 auto;padding:22px 16px 92px}
-
-    /* ✅ 메인 타이틀(요청하신 크게/화이트) */
-    .heroTitle{
-      font-size:36px;font-weight:900;letter-spacing:-0.02em;
-      color:#fff;margin:6px 0 8px;
-    }
+    .heroTitle{font-size:36px;font-weight:900;letter-spacing:-0.02em;color:#fff;margin:6px 0 8px}
     .heroSub{color:var(--muted);font-size:14px;margin:0 0 14px;line-height:1.5}
 
-    .card{
-      margin-top:14px;padding:16px;border-radius:18px;
-      background:var(--card);border:1px solid var(--line);
-    }
+    .card{margin-top:14px;padding:16px;border-radius:18px;background:var(--card);border:1px solid var(--line)}
     h2{font-size:16px;margin:0 0 10px}
     .muted{color:var(--muted);font-size:13px;line-height:1.55}
     .hr{height:1px;background:var(--line);margin:14px 0}
 
-    /* ✅ 기존 스타일 느낌 유지 */
-    .item{
-      padding:14px;border-radius:14px;background:var(--soft);
-      border:1px solid var(--line);margin-bottom:10px;
-      cursor:pointer;
-    }
+    #map{height:360px;margin-top:10px;border-radius:14px;border:1px solid var(--line);overflow:hidden}
+
+    .item{padding:14px;border-radius:14px;background:var(--soft);border:1px solid var(--line);margin-bottom:10px;cursor:pointer}
     .item b{font-size:16px}
-    .tag{
-      display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.16);color:#cfcfd3;background:rgba(255,255,255,.05);
-      margin-left:8px;
-    }
-    .tag.ok{
-      border-color:rgba(120,255,180,.22);
-      color:rgba(170,255,205,.95);
-      background:rgba(120,255,180,.06);
-    }
+    .tag{display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.16);color:#cfcfd3;background:rgba(255,255,255,.05);margin-left:8px}
+    .tag.ok{border-color:rgba(120,255,180,.22);color:rgba(170,255,205,.95);background:rgba(120,255,180,.06)}
 
     .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-    .btn{
-      display:inline-block;border:0;padding:12px 14px;border-radius:14px;
-      background:#fff;color:#000;font-weight:900;text-decoration:none;cursor:pointer;
-    }
-    .btn.sub{
-      background:rgba(255,255,255,.10);color:#fff;font-weight:700;
-      border:1px solid rgba(255,255,255,.16);
-    }
+    .btn{display:inline-block;border:0;padding:12px 14px;border-radius:14px;background:#fff;color:#000;font-weight:900;text-decoration:none;cursor:pointer}
+    .btn.sub{background:rgba(255,255,255,.10);color:#fff;font-weight:700;border:1px solid rgba(255,255,255,.16)}
 
-    /* ✅ 지도 */
-    #map{
-      height:360px;margin-top:10px;border-radius:14px;
-      border:1px solid var(--line);overflow:hidden;
-    }
-
-    /* ✅ 프로필 저장 UI (편의성 추가) */
     label{display:block;font-size:12px;color:#d0d0d6;margin:10px 0 6px}
-    input, select{
-      width:100%;padding:12px;border-radius:12px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.25);color:#fff;font-size:14px;outline:none;
-    }
+    input, select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:#fff;font-size:14px;outline:none}
     input::placeholder{color:rgba(255,255,255,.35)}
     .grid{display:grid;grid-template-columns:1fr;gap:10px}
     @media(min-width:760px){ .grid{grid-template-columns:1fr 1fr} }
 
-    .selectedBox{
-      padding:14px;border-radius:14px;
-      background:rgba(255,255,255,.04);
-      border:1px dashed rgba(255,255,255,.22);
-    }
-    .toast{
-      position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:50;
-      background:rgba(0,0,0,.80);border:1px solid rgba(255,255,255,.18);
-      padding:10px 12px;border-radius:999px;font-size:13px;display:none;
-      max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    }
+    .selectedBox{padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.22)}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:50;background:rgba(0,0,0,.80);border:1px solid rgba(255,255,255,.18);padding:10px 12px;border-radius:999px;font-size:13px;display:none;max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    /* 모집현황 막대그래프 */
+    .barRow{margin:10px 0}
+    .barTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
+    .barName{font-weight:900}
+    .barMeta{color:var(--muted);font-size:12px}
+    .barTrack{height:10px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line);overflow:hidden;margin-top:8px}
+    .barFill{height:100%;background:#fff;border-radius:999px}
   </style>
 </head>
 
 <body>
   <div class="wrap">
     <div class="heroTitle">뜻밖의시장</div>
-    <div class="heroSub">지도에서 행사 위치 확인 → 행사 선택 → 셀러 지원 (편하게)</div>
+    <div class="heroSub">지도에서 위치 확인 → 행사 선택 → 셀러 지원</div>
 
-    <!-- ✅ (A) 기존 메인: 행사 지도 -->
+    <!-- 지도 -->
     <div class="card">
       <h2>행사 지도</h2>
-      <div class="muted">행사 지역을 지도에서 확인하고, 핀을 눌러 정보를 보세요.</div>
+      <div class="muted">핀을 눌러 행사 정보를 보고 선택할 수 있어요.</div>
       <div id="map"></div>
     </div>
 
-    <!-- ✅ (B) 기존 메인: 행사 목록 -->
+    <!-- 모집 현황 -->
+    <div class="card">
+      <h2>모집 현황</h2>
+      <div class="muted">행사별 참가 팀 수 (운영자 기준 수동 업데이트)</div>
+      <div class="hr"></div>
+      <div id="stats"></div>
+    </div>
+
+    <!-- 행사 목록 + 지원 -->
     <div class="card">
       <h2>출점 공고</h2>
-      <div class="muted">행사를 눌러 선택하세요. (선택된 행사는 아래에 표시됩니다)</div>
+      <div class="muted">행사를 눌러 선택하세요.</div>
 
       <div class="hr"></div>
-
       <div id="eventList"></div>
 
       <div class="hr"></div>
-
       <div class="selectedBox">
         <b id="selName">선택된 행사 없음</b>
         <span class="tag ok" id="selBadge" style="display:none">선택됨</span><br>
@@ -133,39 +93,30 @@
       </div>
 
       <div class="btnRow">
-        <button class="btn" id="applyBtn">이 행사로 지원하기</button>
+        <!-- JS가 죽어도 폼은 열리게 링크 백업 포함 -->
+        <a class="btn" id="applyBtn"
+           href="https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform">
+          이 행사로 지원하기
+        </a>
         <button class="btn sub" id="markDoneBtn">신청완료 표시/해제</button>
       </div>
 
       <div class="muted" style="margin-top:10px">
-        * “신청완료”는 이 아이폰(기기)에만 표시됩니다(서버 없이 MVP용).
+        * “신청완료”는 이 기기에서만 표시됩니다(MVP용).
       </div>
     </div>
 
-    <!-- ✅ (C) 오늘 추가: 기존 셀러 정보 저장(편의성) -->
+    <!-- 프로필 저장 -->
     <div class="card">
       <h2>기존 셀러 정보 (1회 저장)</h2>
-      <div class="muted">다음 단계에서 “자동입력(entry)”까지 붙이면, 구글폼이 거의 자동으로 채워집니다.</div>
-
+      <div class="muted">다음 단계에서 자동입력(entry)을 붙이면 구글폼이 거의 자동으로 채워집니다.</div>
       <div class="hr"></div>
 
       <div class="grid">
-        <div>
-          <label>상호명 / 브랜드명 *</label>
-          <input id="p_brand" placeholder="예) 출출빌라">
-        </div>
-        <div>
-          <label>대표자 이름 *</label>
-          <input id="p_owner" placeholder="예) 전세운">
-        </div>
-        <div>
-          <label>휴대폰 번호 *</label>
-          <input id="p_phone" inputmode="tel" placeholder="예) 010-1234-5678">
-        </div>
-        <div>
-          <label>이메일 *</label>
-          <input id="p_email" inputmode="email" placeholder="예) marketfindout@gmail.com">
-        </div>
+        <div><label>상호명 / 브랜드명 *</label><input id="p_brand" placeholder="예) 출출빌라"></div>
+        <div><label>대표자 이름 *</label><input id="p_owner" placeholder="예) 전세운"></div>
+        <div><label>휴대폰 번호 *</label><input id="p_phone" inputmode="tel" placeholder="예) 010-1234-5678"></div>
+        <div><label>이메일 *</label><input id="p_email" inputmode="email" placeholder="예) marketfindout@gmail.com"></div>
         <div>
           <label>판매 카테고리 *</label>
           <select id="p_category">
@@ -177,10 +128,7 @@
             <option value="기타">기타</option>
           </select>
         </div>
-        <div>
-          <label>인스타그램 (선택)</label>
-          <input id="p_insta" placeholder="예) @brandname">
-        </div>
+        <div><label>인스타그램 (선택)</label><input id="p_insta" placeholder="예) @brandname"></div>
       </div>
 
       <div class="btnRow">
@@ -194,39 +142,31 @@
   <div class="toast" id="toast"></div>
 
 <script>
-  /***********************
-   * ✅ 전세운님 수정(필수 1개)
-   ***********************/
+  /*********** 전세운님 수정(필수 1개) ***********/
   const SELLER_FORM_BASE =
     "https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform";
 
-  /***********************
-   * ✅ 행사 데이터 (지도핀/목록 공통 사용)
-   * - 좌표는 “실제 아파트”로 바꿔도 되고,
-   *   지금은 MVP 예시로 동탄/용인 좌표를 넣어둠
-   ***********************/
+  /*********** 행사 데이터 (여기 숫자만 바꾸면 그래프 자동 반영) ***********/
   const EVENTS = [
     {
-      id:"dt1",
-      area:"동탄",
+      id:"dt1", area:"동탄",
       name:"동탄역 롯데캐슬",
       date:"2026-01-10 ~ 01-11",
       address:"경기도 화성시 동탄역 인근(예시)",
-      lat:37.1993, lng:127.0970
+      lat:37.1993, lng:127.0970,
+      current: 18, capacity: 30
     },
     {
-      id:"yi1",
-      area:"용인",
+      id:"yi1", area:"용인",
       name:"용인 죽전 힐스테이트",
       date:"2026-01-24 ~ 01-25",
       address:"경기도 용인시 죽전동 인근(예시)",
-      lat:37.3274, lng:127.1087
+      lat:37.3274, lng:127.1087,
+      current: 9, capacity: 25
     }
   ];
 
-  /***********************
-   * 내부 공통
-   ***********************/
+  /*********** 공통 ***********/
   const $ = (id) => document.getElementById(id);
   const toastEl = $("toast");
   const toast = (msg) => {
@@ -236,9 +176,6 @@
     window.__t = setTimeout(()=> toastEl.style.display="none", 2000);
   };
 
-  /***********************
-   * 로컬 저장(프로필/신청완료)
-   ***********************/
   const LS_PROFILE = "um_profile_v1";
   const LS_DONE = "um_done_v1";
 
@@ -275,11 +212,7 @@
     renderEventList();
   }
 
-  /***********************
-   * 행사 선택 상태
-   ***********************/
   let selected = null;
-
   function selectEventById(eventId){
     const ev = EVENTS.find(x=>x.id===eventId);
     if(!ev) return;
@@ -290,9 +223,6 @@
     toast("행사를 선택했어요");
   }
 
-  /***********************
-   * 행사 목록 렌더
-   ***********************/
   function renderEventList(){
     const wrap = $("eventList");
     wrap.innerHTML = "";
@@ -309,13 +239,30 @@
     });
   }
 
-  /***********************
-   * 지도 생성 + 핀
-   ***********************/
+  function renderStats(){
+    const el = $("stats");
+    el.innerHTML = "";
+    EVENTS.forEach(ev=>{
+      const cur = Number(ev.current || 0);
+      const cap = Math.max(1, Number(ev.capacity || 1));
+      const pct = Math.min(100, Math.round((cur / cap) * 100));
+
+      const row = document.createElement("div");
+      row.className = "barRow";
+      row.innerHTML = `
+        <div class="barTop">
+          <div class="barName">${ev.name}</div>
+          <div class="barMeta">${cur} / ${cap}팀</div>
+        </div>
+        <div class="barTrack"><div class="barFill" style="width:${pct}%"></div></div>
+      `;
+      el.appendChild(row);
+    });
+  }
+
   function initMap(){
     const center = [EVENTS[0].lat, EVENTS[0].lng];
     const map = L.map("map", { scrollWheelZoom:false }).setView(center, 11);
-
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; OpenStreetMap contributors"
     }).addTo(map);
@@ -331,16 +278,10 @@
       `);
     });
 
-    // 팝업 버튼에서 선택되게 하는 브릿지
-    window.__pick = (id)=>{
-      selectEventById(id);
-      map.closePopup();
-    };
+    window.__pick = (id)=>{ selectEventById(id); map.closePopup(); };
   }
 
-  /***********************
-   * 버튼 동작
-   ***********************/
+  // 버튼들
   $("saveProfile").addEventListener("click", () => {
     const p = {
       brand: $("p_brand").value.trim(),
@@ -369,22 +310,19 @@
     toast(isDone(selected.id) ? "신청완료 표시 ✅" : "신청완료 해제");
   });
 
+  // ✅ JS가 죽어도 폼은 열리지만, iOS에서 더 안정적으로 같은 화면 이동 강제
   $("applyBtn").addEventListener("click", (e) => {
     e.preventDefault();
     if (!selected){ toast("먼저 행사를 선택해 주세요"); return; }
-    const p = loadProfile();
-    if (!p){ toast("먼저 ‘기존 셀러 정보(1회 저장)’를 저장해 주세요"); return; }
-
-    // ✅ MVP 우선: 폼 열기 성공이 목표 (자동입력은 다음 단계에서 한번에 추가)
+    if (!loadProfile()){ toast("먼저 ‘기존 셀러 정보’를 저장해 주세요"); return; }
     setDone(selected.id, true);
     toast("구글폼으로 이동합니다…");
-    window.location.href = SELLER_FORM_BASE;
+    window.location.href = SELLER_FORM_BASE; // 다음 단계에서 entry 자동입력으로 업그레이드
   });
 
-  /***********************
-   * 초기 실행
-   ***********************/
+  // 초기 실행
   renderEventList();
+  renderStats();
   refreshProfileUI();
   initMap();
 </script>
