@@ -7,18 +7,19 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0b0b0c">
 
-  <link rel="manifest" href="./manifest.json">
-
   <title>뜻밖의시장 | 셀러 모집</title>
+
+  <!-- ✅ Leaflet: 반드시 head에서 로드 -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     :root{
       --bg:#0b0b0c;
       --card:#16161a;
+      --soft:rgba(255,255,255,.06);
       --line:rgba(255,255,255,.12);
       --muted:#b2b2b8;
-      --soft:rgba(255,255,255,.06);
-      --soft2:rgba(255,255,255,.10);
     }
     body{
       margin:0;
@@ -27,85 +28,32 @@
       color:#f4f4f6;
     }
     .wrap{max-width:860px;margin:0 auto;padding:22px 16px 92px}
+
+    /* ✅ 메인 타이틀(요청하신 크게/화이트) */
     .heroTitle{
-      font-size:36px;
-      font-weight:900;
-      letter-spacing:-0.02em;
-      color:#fff;
-      margin:6px 0 8px;
+      font-size:36px;font-weight:900;letter-spacing:-0.02em;
+      color:#fff;margin:6px 0 8px;
     }
     .heroSub{color:var(--muted);font-size:14px;margin:0 0 14px;line-height:1.5}
-    .stepRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    .stepTag{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      color:#d6d6db;
-    }
+
     .card{
-      margin-top:14px;
-      padding:16px;
-      border-radius:18px;
-      background:var(--card);
-      border:1px solid var(--line);
+      margin-top:14px;padding:16px;border-radius:18px;
+      background:var(--card);border:1px solid var(--line);
     }
     h2{font-size:16px;margin:0 0 10px}
     .muted{color:var(--muted);font-size:13px;line-height:1.55}
     .hr{height:1px;background:var(--line);margin:14px 0}
-    label{display:block;font-size:12px;color:#d0d0d6;margin:10px 0 6px}
-    input, select{
-      width:100%;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.25);
-      color:#fff;
-      font-size:14px;
-      outline:none;
-    }
-    input::placeholder{color:rgba(255,255,255,.35)}
-    .grid{display:grid;grid-template-columns:1fr;gap:10px}
-    @media(min-width:760px){ .grid{grid-template-columns:1fr 1fr} }
 
+    /* ✅ 기존 스타일 느낌 유지 */
     .item{
-      padding:14px;
-      border-radius:14px;
-      background:var(--soft);
-      border:1px solid var(--line);
-      margin-bottom:10px;
+      padding:14px;border-radius:14px;background:var(--soft);
+      border:1px solid var(--line);margin-bottom:10px;
       cursor:pointer;
-      transition:transform .06s ease;
     }
-    .item:active{transform:scale(.99)}
     .item b{font-size:16px}
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-    .btn{
-      display:inline-block;
-      border:0;
-      padding:12px 14px;
-      border-radius:14px;
-      background:#fff;
-      color:#000;
-      font-weight:900;
-      text-decoration:none;
-      cursor:pointer;
-    }
-    .btn.sub{
-      background:var(--soft2);
-      color:#fff;
-      font-weight:700;
-      border:1px solid rgba(255,255,255,.16);
-    }
     .tag{
-      display:inline-block;
-      font-size:11px;
-      padding:4px 8px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.16);
-      color:#cfcfd3;
-      background:rgba(255,255,255,.05);
+      display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);color:#cfcfd3;background:rgba(255,255,255,.05);
       margin-left:8px;
     }
     .tag.ok{
@@ -113,38 +61,44 @@
       color:rgba(170,255,205,.95);
       background:rgba(120,255,180,.06);
     }
+
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{
+      display:inline-block;border:0;padding:12px 14px;border-radius:14px;
+      background:#fff;color:#000;font-weight:900;text-decoration:none;cursor:pointer;
+    }
+    .btn.sub{
+      background:rgba(255,255,255,.10);color:#fff;font-weight:700;
+      border:1px solid rgba(255,255,255,.16);
+    }
+
+    /* ✅ 지도 */
+    #map{
+      height:360px;margin-top:10px;border-radius:14px;
+      border:1px solid var(--line);overflow:hidden;
+    }
+
+    /* ✅ 프로필 저장 UI (편의성 추가) */
+    label{display:block;font-size:12px;color:#d0d0d6;margin:10px 0 6px}
+    input, select{
+      width:100%;padding:12px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25);color:#fff;font-size:14px;outline:none;
+    }
+    input::placeholder{color:rgba(255,255,255,.35)}
+    .grid{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:760px){ .grid{grid-template-columns:1fr 1fr} }
+
     .selectedBox{
-      padding:14px;
-      border-radius:14px;
+      padding:14px;border-radius:14px;
       background:rgba(255,255,255,.04);
       border:1px dashed rgba(255,255,255,.22);
     }
     .toast{
-      position:fixed;
-      left:50%;
-      transform:translateX(-50%);
-      bottom:16px;
-      z-index:50;
-      background:rgba(0,0,0,.80);
-      border:1px solid rgba(255,255,255,.18);
-      padding:10px 12px;
-      border-radius:999px;
-      font-size:13px;
-      display:none;
-      max-width:92vw;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .warn{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,200,120,.22);
-      background:rgba(255,200,120,.06);
-      color:rgba(255,220,170,.95);
-      font-size:13px;
-      line-height:1.5;
+      position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:50;
+      background:rgba(0,0,0,.80);border:1px solid rgba(255,255,255,.18);
+      padding:10px 12px;border-radius:999px;font-size:13px;display:none;
+      max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     }
   </style>
 </head>
@@ -152,18 +106,46 @@
 <body>
   <div class="wrap">
     <div class="heroTitle">뜻밖의시장</div>
-    <div class="heroSub">셀러 모집 · 메인 화면부터 단계별로 바로 지원까지 이어집니다.</div>
+    <div class="heroSub">지도에서 행사 위치 확인 → 행사 선택 → 셀러 지원 (편하게)</div>
 
-    <div class="stepRow">
-      <div class="stepTag">1) 내 정보 저장(1회)</div>
-      <div class="stepTag">2) 행사 선택</div>
-      <div class="stepTag">3) 셀러 신청(구글폼)</div>
+    <!-- ✅ (A) 기존 메인: 행사 지도 -->
+    <div class="card">
+      <h2>행사 지도</h2>
+      <div class="muted">행사 지역을 지도에서 확인하고, 핀을 눌러 정보를 보세요.</div>
+      <div id="map"></div>
     </div>
 
-    <!-- 1) 프로필 저장 -->
+    <!-- ✅ (B) 기존 메인: 행사 목록 -->
     <div class="card">
-      <h2>1) 기존 셀러 정보 (한 번만 저장)</h2>
-      <div class="muted">이 정보는 이 아이폰(기기)에 저장됩니다. 다음 신청부터 자동으로 채워져요.</div>
+      <h2>출점 공고</h2>
+      <div class="muted">행사를 눌러 선택하세요. (선택된 행사는 아래에 표시됩니다)</div>
+
+      <div class="hr"></div>
+
+      <div id="eventList"></div>
+
+      <div class="hr"></div>
+
+      <div class="selectedBox">
+        <b id="selName">선택된 행사 없음</b>
+        <span class="tag ok" id="selBadge" style="display:none">선택됨</span><br>
+        <span class="muted" id="selMeta"></span>
+      </div>
+
+      <div class="btnRow">
+        <button class="btn" id="applyBtn">이 행사로 지원하기</button>
+        <button class="btn sub" id="markDoneBtn">신청완료 표시/해제</button>
+      </div>
+
+      <div class="muted" style="margin-top:10px">
+        * “신청완료”는 이 아이폰(기기)에만 표시됩니다(서버 없이 MVP용).
+      </div>
+    </div>
+
+    <!-- ✅ (C) 오늘 추가: 기존 셀러 정보 저장(편의성) -->
+    <div class="card">
+      <h2>기존 셀러 정보 (1회 저장)</h2>
+      <div class="muted">다음 단계에서 “자동입력(entry)”까지 붙이면, 구글폼이 거의 자동으로 채워집니다.</div>
 
       <div class="hr"></div>
 
@@ -196,7 +178,7 @@
           </select>
         </div>
         <div>
-          <label>인스타그램 계정 (선택)</label>
+          <label>인스타그램 (선택)</label>
           <input id="p_insta" placeholder="예) @brandname">
         </div>
       </div>
@@ -207,64 +189,44 @@
         <span class="tag" id="profileStatus">저장 안됨</span>
       </div>
     </div>
-
-    <!-- 2) 행사 선택 -->
-    <div class="card">
-      <h2>2) 행사 선택</h2>
-      <div class="muted">아래 행사 중 하나를 눌러 선택하세요.</div>
-
-      <div class="hr"></div>
-
-      <div class="item" onclick="selectEvent('dt1','동탄역 롯데캐슬','2026-01-10 ~ 01-11','동탄')">
-        <b>동탄역 롯데캐슬</b>
-        <span class="tag ok" id="done-dt1" style="display:none">신청완료</span><br>
-        <span class="muted">2026-01-10 ~ 01-11 · 동탄</span>
-      </div>
-
-      <div class="item" onclick="selectEvent('yi1','용인 죽전 힐스테이트','2026-01-24 ~ 01-25','용인')">
-        <b>용인 죽전 힐스테이트</b>
-        <span class="tag ok" id="done-yi1" style="display:none">신청완료</span><br>
-        <span class="muted">2026-01-24 ~ 01-25 · 용인</span>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="selectedBox">
-        <b id="selName">선택된 행사 없음</b><br>
-        <span class="muted" id="selMeta"></span>
-      </div>
-
-      <div class="btnRow">
-        <button class="btn" id="applyBtn">3) 이 행사로 지원하기</button>
-        <button class="btn sub" id="markDoneBtn">신청완료 표시/해제</button>
-      </div>
-
-      <div class="warn">
-        ✅ 지금 단계 목표: “메인 UI가 그대로 보이고, 단계가 흐트러지지 않는지” 확인<br>
-        - 자동입력(entry)은 다음 단계에서 연결해도 됩니다.<br>
-        - 우선은 버튼 누르면 구글폼이 정상으로 열리면 성공이에요.
-      </div>
-    </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
 <script>
-  /***************
-   * 전세운님이 바꿀 곳: 구글폼 주소 1개만!
-   ***************/
+  /***********************
+   * ✅ 전세운님 수정(필수 1개)
+   ***********************/
   const SELLER_FORM_BASE =
     "https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform";
 
-  // (다음 단계) 자동입력 entry 연결은 아직 안 붙여도 됨
-  // const ENTRY = { event:"entry.123", brand:"entry.456", ... };
+  /***********************
+   * ✅ 행사 데이터 (지도핀/목록 공통 사용)
+   * - 좌표는 “실제 아파트”로 바꿔도 되고,
+   *   지금은 MVP 예시로 동탄/용인 좌표를 넣어둠
+   ***********************/
+  const EVENTS = [
+    {
+      id:"dt1",
+      area:"동탄",
+      name:"동탄역 롯데캐슬",
+      date:"2026-01-10 ~ 01-11",
+      address:"경기도 화성시 동탄역 인근(예시)",
+      lat:37.1993, lng:127.0970
+    },
+    {
+      id:"yi1",
+      area:"용인",
+      name:"용인 죽전 힐스테이트",
+      date:"2026-01-24 ~ 01-25",
+      address:"경기도 용인시 죽전동 인근(예시)",
+      lat:37.3274, lng:127.1087
+    }
+  ];
 
-  /***************
-   * 내부 로직 (건드릴 필요 없음)
-   ***************/
-  const LS_PROFILE = "um_profile_v1";
-  const LS_DONE = "um_done_v1";
-
+  /***********************
+   * 내부 공통
+   ***********************/
   const $ = (id) => document.getElementById(id);
   const toastEl = $("toast");
   const toast = (msg) => {
@@ -274,18 +236,16 @@
     window.__t = setTimeout(()=> toastEl.style.display="none", 2000);
   };
 
-  function loadProfile(){
-    try { return JSON.parse(localStorage.getItem(LS_PROFILE)) || null; }
-    catch { return null; }
-  }
-  function saveProfile(p){
-    localStorage.setItem(LS_PROFILE, JSON.stringify(p));
-    refreshProfileUI();
-  }
-  function clearProfile(){
-    localStorage.removeItem(LS_PROFILE);
-    refreshProfileUI();
-  }
+  /***********************
+   * 로컬 저장(프로필/신청완료)
+   ***********************/
+  const LS_PROFILE = "um_profile_v1";
+  const LS_DONE = "um_done_v1";
+
+  function loadProfile(){ try { return JSON.parse(localStorage.getItem(LS_PROFILE)) || null; } catch { return null; } }
+  function saveProfile(p){ localStorage.setItem(LS_PROFILE, JSON.stringify(p)); refreshProfileUI(); }
+  function clearProfile(){ localStorage.removeItem(LS_PROFILE); refreshProfileUI(); }
+
   function refreshProfileUI(){
     const p = loadProfile();
     const tag = $("profileStatus");
@@ -312,24 +272,75 @@
     const d = loadDone();
     if (val) d[id] = true; else delete d[id];
     localStorage.setItem(LS_DONE, JSON.stringify(d));
-    refreshDoneBadges();
+    renderEventList();
   }
-  function refreshDoneBadges(){
-    ["dt1","yi1"].forEach(id=>{
-      const el = document.getElementById("done-"+id);
-      if (!el) return;
-      el.style.display = isDone(id) ? "inline-block" : "none";
+
+  /***********************
+   * 행사 선택 상태
+   ***********************/
+  let selected = null;
+
+  function selectEventById(eventId){
+    const ev = EVENTS.find(x=>x.id===eventId);
+    if(!ev) return;
+    selected = ev;
+    $("selName").textContent = ev.name;
+    $("selMeta").textContent = `${ev.date} · ${ev.area} · ${ev.address}`;
+    $("selBadge").style.display = "inline-block";
+    toast("행사를 선택했어요");
+  }
+
+  /***********************
+   * 행사 목록 렌더
+   ***********************/
+  function renderEventList(){
+    const wrap = $("eventList");
+    wrap.innerHTML = "";
+    EVENTS.forEach(ev=>{
+      const div = document.createElement("div");
+      div.className = "item";
+      div.onclick = ()=> selectEventById(ev.id);
+      div.innerHTML = `
+        <b>${ev.name}</b>
+        ${isDone(ev.id) ? `<span class="tag ok">신청완료</span>` : ``}
+        <br><span class="muted">${ev.date} · ${ev.area}</span>
+      `;
+      wrap.appendChild(div);
     });
   }
 
-  let selected = null;
-  window.selectEvent = (id, name, date, area) => {
-    selected = { id, name, date, area };
-    $("selName").textContent = name;
-    $("selMeta").textContent = `${date} · ${area}`;
-    toast("행사를 선택했어요");
-  };
+  /***********************
+   * 지도 생성 + 핀
+   ***********************/
+  function initMap(){
+    const center = [EVENTS[0].lat, EVENTS[0].lng];
+    const map = L.map("map", { scrollWheelZoom:false }).setView(center, 11);
 
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    EVENTS.forEach(ev=>{
+      const marker = L.marker([ev.lat, ev.lng]).addTo(map);
+      marker.bindPopup(`
+        <b>${ev.name}</b><br>
+        <span>${ev.date}</span><br>
+        <span style="color:#666">${ev.address}</span><br>
+        <button style="margin-top:8px;padding:8px 10px;border-radius:10px;border:0;font-weight:800;cursor:pointer"
+          onclick="window.__pick('${ev.id}')">이 행사 선택</button>
+      `);
+    });
+
+    // 팝업 버튼에서 선택되게 하는 브릿지
+    window.__pick = (id)=>{
+      selectEventById(id);
+      map.closePopup();
+    };
+  }
+
+  /***********************
+   * 버튼 동작
+   ***********************/
   $("saveProfile").addEventListener("click", () => {
     const p = {
       brand: $("p_brand").value.trim(),
@@ -362,17 +373,20 @@
     e.preventDefault();
     if (!selected){ toast("먼저 행사를 선택해 주세요"); return; }
     const p = loadProfile();
-    if (!p){ toast("먼저 1) 내 정보 저장을 해주세요"); return; }
+    if (!p){ toast("먼저 ‘기존 셀러 정보(1회 저장)’를 저장해 주세요"); return; }
 
-    // MVP 1단계: 우선 폼이 열리면 성공 (자동입력은 다음 단계)
+    // ✅ MVP 우선: 폼 열기 성공이 목표 (자동입력은 다음 단계에서 한번에 추가)
     setDone(selected.id, true);
     toast("구글폼으로 이동합니다…");
     window.location.href = SELLER_FORM_BASE;
   });
 
-  // 초기화
+  /***********************
+   * 초기 실행
+   ***********************/
+  renderEventList();
   refreshProfileUI();
-  refreshDoneBadges();
+  initMap();
 </script>
 </body>
 </html>
