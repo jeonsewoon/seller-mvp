@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0b0b0c">
-  <title>뜻밖의시장 | 셀러 모집</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0b0b0c" />
+  <title>뜻밖의 시장 | 셀러 전시</title>
 
   <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
@@ -17,7 +17,11 @@
       --bg:#0b0b0c; --card:#16161a; --soft:rgba(255,255,255,.06);
       --line:rgba(255,255,255,.12); --muted:#b2b2b8;
     }
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:#f4f4f6}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+      background:var(--bg); color:#f4f4f6
+    }
     .wrap{max-width:860px;margin:0 auto;padding:22px 16px 92px}
     .heroTitle{font-size:36px;font-weight:900;letter-spacing:-0.02em;color:#fff;margin:6px 0 8px}
     .heroSub{color:var(--muted);font-size:14px;margin:0 0 14px;line-height:1.5}
@@ -33,72 +37,101 @@
     .item b{font-size:16px}
     .tag{display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.16);color:#cfcfd3;background:rgba(255,255,255,.05);margin-left:8px}
     .tag.ok{border-color:rgba(120,255,180,.22);color:rgba(170,255,205,.95);background:rgba(120,255,180,.06)}
+    .tag.done{border-color:rgba(255,255,255,.18);color:#e7e7ea;background:rgba(255,255,255,.10)}
 
     .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
     .btn{display:inline-block;border:0;padding:12px 14px;border-radius:14px;background:#fff;color:#000;font-weight:900;text-decoration:none;cursor:pointer}
     .btn.sub{background:rgba(255,255,255,.10);color:#fff;font-weight:700;border:1px solid rgba(255,255,255,.16)}
 
     label{display:block;font-size:12px;color:#d0d0d6;margin:10px 0 6px}
-    input, select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:#fff;font-size:14px;outline:none}
+    input, select{
+      width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25);color:#fff;font-size:14px;outline:none
+    }
     input::placeholder{color:rgba(255,255,255,.35)}
     .grid{display:grid;grid-template-columns:1fr;gap:10px}
     @media(min-width:760px){ .grid{grid-template-columns:1fr 1fr} }
 
     .selectedBox{padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.22)}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:50;background:rgba(0,0,0,.80);border:1px solid rgba(255,255,255,.18);padding:10px 12px;border-radius:999px;font-size:13px;display:none;max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .toast{
+      position:fixed;left:50%;transform:translateX(-50%);
+      bottom:16px;z-index:50;background:rgba(0,0,0,.80);
+      border:1px solid rgba(255,255,255,.18);padding:10px 12px;border-radius:999px;
+      font-size:13px;display:none;max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+    }
 
     /* 모집현황 막대그래프 */
     .barRow{margin:10px 0}
     .barTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
     .barName{font-weight:900}
     .barMeta{color:var(--muted);font-size:12px}
-    .barTrack{height:10px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line);overflow:hidden;margin-top:8px}
+    .barTrack{
+      height:10px;border-radius:999px;background:rgba(255,255,255,.08);
+      border:1px solid var(--line);overflow:hidden;margin-top:8px
+    }
     .barFill{height:100%;background:#fff;border-radius:999px}
+
+    .dangerNote{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,77,79,.35);
+      background:rgba(255,77,79,.10);
+      color:#ffd6d6;
+      font-size:12px;
+      display:none;
+      white-space:pre-wrap;
+    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-    <div class="heroTitle">뜻밖의시장</div>
-    <div class="heroSub">지도에서 위치 확인 → 행사 선택 → 셀러 지원 (행사명 자동입력)</div>
+    <div class="heroTitle">뜻밖의 시장</div>
+    <div class="heroSub">지도에서 위치 확인 → 행사 선택 → 셀러 지원(행사명 자동입력)</div>
 
     <!-- 지도 -->
     <div class="card">
-      <h2>행사 지도</h2>
-      <div class="muted">핀을 눌러 행사 정보를 보고 선택할 수 있어요.</div>
+      <h2>행사지도</h2>
+      <div class="muted">핀을 눌러 행사 정보를 확인하고 선택하세요.</div>
       <div id="map"></div>
+      <div class="dangerNote" id="mapWarn"></div>
     </div>
 
-    <!-- 모집 현황 -->
+    <!-- 등록현황 -->
     <div class="card">
       <h2>모집 현황</h2>
-      <div class="muted">행사별 참가 팀 수 (운영자 기준 수동 업데이트)</div>
+      <div class="muted">행사별 참가 팀 수(운영자 기준 업데이트)</div>
       <div class="hr"></div>
       <div id="stats"></div>
+      <div class="dangerNote" id="statsWarn"></div>
     </div>
 
-    <!-- 행사 목록 + 지원 -->
+    <!-- 목록 + 지원 -->
     <div class="card">
       <h2>출점 공고</h2>
-      <div class="muted">행사를 눌러 선택하세요. 선택 후 “지원하기”를 누르면 구글폼에 행사명이 자동입력됩니다.</div>
+      <div class="muted">행사를 선택하세요. 선택 후 “지원하기”를 누르면 Google 폼에 행사명이 자동입력됩니다.</div>
 
       <div class="hr"></div>
       <div id="eventList"></div>
+      <div class="dangerNote" id="listWarn"></div>
 
       <div class="hr"></div>
       <div class="selectedBox">
         <b id="selName">선택된 행사 없음</b>
-        <span class="tag ok" id="selBadge" style="display:none">선택됨</span><br>
+        <span class="tag ok" id="selBadge" style="display:none">선택됨</span>
+        <span class="tag done" id="selDoneBadge" style="display:none">신청완료</span>
+        <br />
         <span class="muted" id="selMeta"></span>
       </div>
 
       <div class="btnRow">
-        <!-- ✅ JS가 죽어도 폼은 열리게 “기본 폼 링크”를 href로 유지 -->
+        <!-- JS가 죽어도 폼은 열리게 기본 링크 유지 -->
         <a class="btn" id="applyBtn"
            href="https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform">
-          이 행사로 지원하기
+          이 행사를 지원하기
         </a>
-        <button class="btn sub" id="markDoneBtn">신청완료 표시/해제</button>
+        <button class="btn sub" id="markDoneBtn" type="button">신청완료표시/해제</button>
       </div>
 
       <div class="muted" style="margin-top:10px">
@@ -106,17 +139,17 @@
       </div>
     </div>
 
-    <!-- 프로필 저장 -->
+    <!-- 프로필 작성 -->
     <div class="card">
       <h2>기존 셀러 정보 (1회 저장)</h2>
-      <div class="muted">다음 단계에서 상호/전화번호 등도 entry를 찾으면 자동입력까지 연결할 수 있어요.</div>
+      <div class="muted">다음 단계에서 전화번호/카테고리 등도 구글폼 자동입력까지 확장 가능합니다.</div>
       <div class="hr"></div>
 
       <div class="grid">
-        <div><label>상호명 / 브랜드명 *</label><input id="p_brand" placeholder="예) 출출빌라"></div>
-        <div><label>대표자 이름 *</label><input id="p_owner" placeholder="예) 전세운"></div>
-        <div><label>휴대폰 번호 *</label><input id="p_phone" inputmode="tel" placeholder="예) 010-1234-5678"></div>
-        <div><label>이메일 *</label><input id="p_email" inputmode="email" placeholder="예) marketfindout@gmail.com"></div>
+        <div><label>상호명 *</label><input id="p_brand" placeholder="예) 출출빌라" /></div>
+        <div><label>대표자 이름 *</label><input id="p_owner" placeholder="예) 전세운" /></div>
+        <div><label>휴대폰번호 *</label><input id="p_phone" inputmode="tel" placeholder="예) 010-1234-5678" /></div>
+        <div><label>이메일 *</label><input id="p_email" inputmode="email" placeholder="예) marketfindout@gmail.com" /></div>
         <div>
           <label>판매 카테고리 *</label>
           <select id="p_category">
@@ -128,13 +161,13 @@
             <option value="기타">기타</option>
           </select>
         </div>
-        <div><label>인스타그램 (선택)</label><input id="p_insta" placeholder="예) @brandname"></div>
+        <div><label>인스타그램 (선택)</label><input id="p_insta" placeholder="예) @brandname" /></div>
       </div>
 
       <div class="btnRow">
-        <button class="btn" id="saveProfile">내 정보 저장</button>
-        <button class="btn sub" id="clearProfile">저장 삭제</button>
-        <span class="tag" id="profileStatus">저장 안됨</span>
+        <button class="btn" id="saveProfile" type="button">내 정보 저장</button>
+        <button class="btn sub" id="clearProfile" type="button">저장 삭제</button>
+        <span class="tag" id="profileStatus">저장되지 않음</span>
       </div>
     </div>
   </div>
@@ -142,46 +175,77 @@
   <div class="toast" id="toast"></div>
 
 <script>
-  /*********** 구글폼 기본 링크 ***********/
+  /************ Google Form 기본 링크 *********/
   const SELLER_FORM_BASE =
     "https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform";
 
-  /*********** ✅ 행사명 자동입력 entry (전세운님이 찾아준 값) ***********/
+  /************ 행사명 자동입력 entry *********/
   const ENTRY_EVENT_NAME = "entry.1498135098";
 
-  /*********** 행사 데이터 (여기 숫자만 바꾸면 그래프 자동 반영) ***********/
-  const EVENTS = [
-    {
-      id:"dt1", area:"동탄",
-      name:"동탄역 롯데캐슬",
-      date:"2026-01-10 ~ 01-11",
-      address:"경기도 화성시 동탄역 인근(예시)",
-      lat:37.1993, lng:127.0970,
-      current: 18, capacity: 30
-    },
-    {
-      id:"yi1", area:"용인",
-      name:"용인 죽전 힐스테이트",
-      date:"2026-01-24 ~ 01-25",
-      address:"경기도 용인시 죽전동 인근(예시)",
-      lat:37.3274, lng:127.1087,
-      current: 9, capacity: 25
-    }
-  ];
-
-  /*********** 공통 ***********/
+  /************ DOM helpers *********/
   const $ = (id) => document.getElementById(id);
   const toastEl = $("toast");
-  const toast = (msg) => {
+  function toast(msg){
     toastEl.textContent = msg;
     toastEl.style.display = "block";
     clearTimeout(window.__t);
     window.__t = setTimeout(()=> toastEl.style.display="none", 2000);
-  };
+  }
 
+  /************ LocalStorage keys *********/
   const LS_PROFILE = "um_profile_v1";
   const LS_DONE = "um_done_v1";
 
+  /************ State *********/
+  let EVENTS = [];
+  let selected = null;
+  let map = null;
+  let markersLayer = null;
+
+  /************ Utils *********/
+  function safeStr(v){ return (v==null) ? "" : String(v); }
+  function num(v, d=0){ const n = Number(v); return Number.isFinite(n) ? n : d; }
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+  function isFull(ev){
+    const cap = num(ev.capacity, 0);
+    const cur = num(ev.current, 0);
+    return cap > 0 && cur >= cap;
+  }
+  function fmtDateRange(start, end){
+    // expects YYYY-MM-DD
+    const s = safeStr(start);
+    const e = safeStr(end);
+    if(!s && !e) return "";
+    return (s && e) ? `${s} ~ ${e}` : (s || e);
+  }
+
+  function normalizeEvent(raw){
+    // normalize keys and clean weird whitespace
+    const ev = {
+      id: safeStr(raw.id).trim() || ("ev_" + Math.random().toString(16).slice(2)),
+      name: safeStr(raw.name).trim(),
+      area: safeStr(raw.area).replace(/\u200B|\u200C|\u200D|\uFEFF/g, "").trim(),
+      start: safeStr(raw.start).trim(),
+      end: safeStr(raw.end).trim(),
+      address: safeStr(raw.address).trim(),
+      lat: (raw.lat === null || raw.lat === "" || typeof raw.lat === "undefined") ? null : Number(raw.lat),
+      lng: (raw.lng === null || raw.lng === "" || typeof raw.lng === "undefined") ? null : Number(raw.lng),
+      capacity: num(raw.capacity, 0),
+      current: num(raw.current, 0),
+      note: safeStr(raw.note).trim(),
+    };
+
+    // basic guard: if start like "2026년 2월 20일" or "20260220", keep as-is but it may not sort well
+    // We still show it in list if present. Prefer YYYY-MM-DD from admin/events.json.
+    return ev;
+  }
+
+  function sortEvents(arr){
+    // sort by start asc (string compare works for YYYY-MM-DD)
+    return arr.slice().sort((a,b)=> safeStr(a.start).localeCompare(safeStr(b.start)));
+  }
+
+  /************ Profile *********/
   function loadProfile(){ try { return JSON.parse(localStorage.getItem(LS_PROFILE)) || null; } catch { return null; } }
   function saveProfile(p){ localStorage.setItem(LS_PROFILE, JSON.stringify(p)); refreshProfileUI(); }
   function clearProfile(){ localStorage.removeItem(LS_PROFILE); refreshProfileUI(); }
@@ -189,8 +253,8 @@
   function refreshProfileUI(){
     const p = loadProfile();
     const tag = $("profileStatus");
-    if (!p){
-      tag.textContent = "저장 안됨";
+    if(!p){
+      tag.textContent = "저장되지 않음";
       tag.className = "tag";
       ["p_brand","p_owner","p_phone","p_email","p_insta"].forEach(k => $(k).value = "");
       $("p_category").value = "";
@@ -206,37 +270,69 @@
     $("p_insta").value = p.insta || "";
   }
 
+  /************ Done marks *********/
   function loadDone(){ try { return JSON.parse(localStorage.getItem(LS_DONE)) || {}; } catch { return {}; } }
   function isDone(id){ return !!loadDone()[id]; }
   function setDone(id, val){
     const d = loadDone();
-    if (val) d[id] = true; else delete d[id];
+    if(val) d[id] = true; else delete d[id];
     localStorage.setItem(LS_DONE, JSON.stringify(d));
     renderEventList();
+    refreshSelectedBox();
   }
 
-  let selected = null;
+  /************ Selection *********/
+  function refreshSelectedBox(){
+    if(!selected){
+      $("selName").textContent = "선택된 행사 없음";
+      $("selMeta").textContent = "";
+      $("selBadge").style.display = "none";
+      $("selDoneBadge").style.display = "none";
+      return;
+    }
+    $("selName").textContent = selected.name;
+    const dateText = selected.date || fmtDateRange(selected.start, selected.end);
+    const meta = [dateText, selected.area, selected.address].filter(Boolean).join(" · ");
+    $("selMeta").textContent = meta;
+    $("selBadge").style.display = "inline-block";
+    $("selDoneBadge").style.display = isDone(selected.id) ? "inline-block" : "none";
+  }
+
   function selectEventById(eventId){
     const ev = EVENTS.find(x=>x.id===eventId);
     if(!ev) return;
     selected = ev;
-    $("selName").textContent = ev.name;
-    $("selMeta").textContent = `${ev.date} · ${ev.area} · ${ev.address}`;
-    $("selBadge").style.display = "inline-block";
+    refreshSelectedBox();
     toast("행사를 선택했어요");
   }
 
+  /************ Render: list + stats *********/
   function renderEventList(){
     const wrap = $("eventList");
     wrap.innerHTML = "";
+
+    if(EVENTS.length === 0){
+      $("listWarn").style.display = "block";
+      $("listWarn").textContent = "행사 데이터가 없습니다. 관리자에서 events.json을 확인해주세요.";
+      return;
+    } else {
+      $("listWarn").style.display = "none";
+    }
+
     EVENTS.forEach(ev=>{
       const div = document.createElement("div");
       div.className = "item";
       div.onclick = ()=> selectEventById(ev.id);
+
+      const doneTag = isDone(ev.id) ? `<span class="tag ok">신청완료</span>` : ``;
+      const fullTag = isFull(ev) ? `<span class="tag done">마감</span>` : `<span class="tag ok">모집중</span>`;
+      const dateText = ev.date || fmtDateRange(ev.start, ev.end);
+
       div.innerHTML = `
-        <b>${ev.name}</b>
-        ${isDone(ev.id) ? `<span class="tag ok">신청완료</span>` : ``}
-        <br><span class="muted">${ev.date} · ${ev.area}</span>
+        <b>${escapeHtml(ev.name)}</b>
+        ${doneTag}
+        ${fullTag}
+        <br><span class="muted">${escapeHtml(dateText)} · ${escapeHtml(ev.area || "")}</span>
       `;
       wrap.appendChild(div);
     });
@@ -245,16 +341,27 @@
   function renderStats(){
     const el = $("stats");
     el.innerHTML = "";
+
+    if(EVENTS.length === 0){
+      $("statsWarn").style.display = "block";
+      $("statsWarn").textContent = "모집 현황을 표시할 행사가 없습니다.";
+      return;
+    } else {
+      $("statsWarn").style.display = "none";
+    }
+
     EVENTS.forEach(ev=>{
-      const cur = Number(ev.current || 0);
-      const cap = Math.max(1, Number(ev.capacity || 1));
-      const pct = Math.min(100, Math.round((cur / cap) * 100));
+      const cur = num(ev.current, 0);
+      const capRaw = num(ev.capacity, 0);
+      const cap = Math.max(1, capRaw || 1);
+      const pct = clamp(Math.round((cur / cap) * 100), 0, 100);
+
       const row = document.createElement("div");
       row.className = "barRow";
       row.innerHTML = `
         <div class="barTop">
-          <div class="barName">${ev.name}</div>
-          <div class="barMeta">${cur} / ${cap}팀</div>
+          <div class="barName">${escapeHtml(ev.name)}</div>
+          <div class="barMeta">${cur} / ${capRaw || 0}팀</div>
         </div>
         <div class="barTrack"><div class="barFill" style="width:${pct}%"></div></div>
       `;
@@ -262,36 +369,117 @@
     });
   }
 
+  function escapeHtml(s){
+    return String(s ?? "").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+  }
+
+  /************ Map *********/
+  function makeIcon(color){
+    // simple colored marker using divIcon
+    return L.divIcon({
+      className: "",
+      html: `
+        <div style="
+          width:14px;height:14px;border-radius:999px;
+          background:${color};
+          border:2px solid rgba(255,255,255,.9);
+          box-shadow:0 6px 16px rgba(0,0,0,.45);
+        "></div>
+      `,
+      iconSize: [14,14],
+      iconAnchor: [7,7],
+      popupAnchor: [0,-8],
+    });
+  }
+
   function initMap(){
-    const center = [EVENTS[0].lat, EVENTS[0].lng];
-    const map = L.map("map", { scrollWheelZoom:false }).setView(center, 11);
+    if(map) return;
+
+    // default center: Seoul-ish; will fit bounds if markers exist
+    map = L.map("map", { scrollWheelZoom:false }).setView([37.5665, 126.9780], 11);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors"
+      attribution: "© OpenStreetMap contributors"
     }).addTo(map);
 
+    markersLayer = L.layerGroup().addTo(map);
+  }
+
+  function renderMapPins(){
+    initMap();
+    markersLayer.clearLayers();
+
+    const pts = [];
+    let skipped = 0;
+
     EVENTS.forEach(ev=>{
-      const marker = L.marker([ev.lat, ev.lng]).addTo(map);
+      const lat = ev.lat;
+      const lng = ev.lng;
+      if(typeof lat !== "number" || typeof lng !== "number" || Number.isNaN(lat) || Number.isNaN(lng)){
+        skipped++;
+        return;
+      }
+
+      pts.push([lat,lng]);
+
+      const color = isFull(ev) ? "rgba(255,255,255,.65)" : "#ffffff";
+      const marker = L.marker([lat, lng], { icon: makeIcon(color) }).addTo(markersLayer);
+
+      const dateText = ev.date || fmtDateRange(ev.start, ev.end);
+      const addr = ev.address ? `<span style="color:#9a9aa0">${escapeHtml(ev.address)}</span><br>` : ``;
+
       marker.bindPopup(`
-        <b>${ev.name}</b><br>
-        <span>${ev.date}</span><br>
-        <span style="color:#666">${ev.address}</span><br>
-        <button style="margin-top:8px;padding:8px 10px;border-radius:10px;border:0;font-weight:800;cursor:pointer"
-          onclick="window.__pick('${ev.id}')">이 행사 선택</button>
+        <b>${escapeHtml(ev.name)}</b><br>
+        <span>${escapeHtml(dateText)}</span><br>
+        ${addr}
+        <button
+          style="margin-top:8px;padding:8px 10px;border-radius:10px;border:0;font-weight:900;cursor:pointer"
+          onclick="window.__pick('${escapeHtml(ev.id)}')"
+        >이 행사 선택</button>
       `);
     });
 
     window.__pick = (id)=>{ selectEventById(id); map.closePopup(); };
+
+    if(pts.length > 0){
+      const bounds = L.latLngBounds(pts);
+      map.fitBounds(bounds, { padding:[30,30] });
+      $("mapWarn").style.display = "none";
+    } else {
+      // no coordinates
+      $("mapWarn").style.display = "block";
+      $("mapWarn").textContent =
+        "지도 핀이 표시되지 않습니다.\n" +
+        "원인: events.json의 lat/lng가 비어있음(null) 또는 숫자가 아님.\n" +
+        "해결: 관리자에서 위도(lat)/경도(lng)를 입력하면 지도 핀이 자동 표시됩니다.";
+      // keep default view
+    }
+
+    if(skipped > 0){
+      // not fatal, but informative
+      // (we already show warning if no pts)
+    }
   }
 
+  /************ Form prefill *********/
   function buildPrefilledFormUrl(ev){
-    // 행사명을 폼에 자동입력: "행사명 (날짜)"
-    const eventValue = `${ev.name} (${ev.date})`;
+    const dateText = ev.date || fmtDateRange(ev.start, ev.end);
+    const eventValue = dateText ? `${ev.name} (${dateText})` : `${ev.name}`;
     const qs = `${ENTRY_EVENT_NAME}=${encodeURIComponent(eventValue)}`;
-    // usp=pp_url 은 없어도 되지만, 구글폼에서 “미리채움” 모드처럼 처리돼 안정적
     return `${SELLER_FORM_BASE}?usp=pp_url&${qs}`;
   }
 
-  // 버튼들
+  /************ Load events.json *********/
+  async function loadEvents(){
+    // cache buster
+    const url = `./events.json?ts=${Date.now()}`;
+    const res = await fetch(url, { cache: "no-store" });
+    if(!res.ok) throw new Error(`events.json 불러오기 실패 (${res.status})`);
+    const data = await res.json();
+    if(!Array.isArray(data)) throw new Error("events.json 형식 오류(배열이 아님)");
+    return sortEvents(data.map(normalizeEvent));
+  }
+
+  /************ Buttons *********/
   $("saveProfile").addEventListener("click", () => {
     const p = {
       brand: $("p_brand").value.trim(),
@@ -301,12 +489,12 @@
       category: $("p_category").value.trim(),
       insta: $("p_insta").value.trim()
     };
-    if (!p.brand || !p.owner || !p.phone || !p.email || !p.category){
-      toast("필수 항목(상호/이름/전화/이메일/카테고리)을 채워주세요");
+    if(!p.brand || !p.owner || !p.phone || !p.email || !p.category){
+      toast("필수 항목(상호/이름/전화/이메일/카테고리)을 입력해 주세요");
       return;
     }
     saveProfile(p);
-    toast("내 정보 저장 완료 ✅");
+    toast("내 정보 저장 ✅");
   });
 
   $("clearProfile").addEventListener("click", () => {
@@ -315,30 +503,54 @@
   });
 
   $("markDoneBtn").addEventListener("click", () => {
-    if (!selected){ toast("먼저 행사를 선택해 주세요"); return; }
+    if(!selected){ toast("먼저 행사를 선택해 주세요"); return; }
     setDone(selected.id, !isDone(selected.id));
     toast(isDone(selected.id) ? "신청완료 표시 ✅" : "신청완료 해제");
   });
 
-  // ✅ 핵심: 지원하기 클릭 시 “행사명 자동입력” 링크로 이동
   $("applyBtn").addEventListener("click", (e) => {
     e.preventDefault();
-
-    if (!selected){ toast("먼저 행사를 선택해 주세요"); return; }
-    if (!loadProfile()){ toast("먼저 ‘기존 셀러 정보’를 저장해 주세요"); return; }
+    if(!selected){ toast("먼저 행사를 선택해 주세요"); return; }
+    if(!loadProfile()){ toast("먼저 '기존 셀러 정보'를 저장해 주세요"); return; }
 
     setDone(selected.id, true);
-
     const url = buildPrefilledFormUrl(selected);
     toast("구글폼으로 이동합니다…(행사명 자동입력)");
     window.location.href = url;
   });
 
-  // 초기 실행
-  renderEventList();
-  renderStats();
-  refreshProfileUI();
-  initMap();
+  /************ Boot *********/
+  (async function boot(){
+    refreshProfileUI();
+    initMap();
+
+    try{
+      EVENTS = await loadEvents();
+      renderEventList();
+      renderStats();
+      renderMapPins();
+
+      // auto select first
+      if(EVENTS.length > 0){
+        selectEventById(EVENTS[0].id);
+      }
+    }catch(err){
+      console.error(err);
+      $("listWarn").style.display = "block";
+      $("listWarn").textContent =
+        "행사 데이터를 불러오지 못했습니다.\n" +
+        "확인: events.json 파일이 존재하는지, 형식이 올바른지 확인하세요.\n\n" +
+        `에러: ${err.message}`;
+
+      $("statsWarn").style.display = "block";
+      $("statsWarn").textContent = "모집 현황을 표시할 수 없습니다(데이터 로딩 실패).";
+
+      $("mapWarn").style.display = "block";
+      $("mapWarn").textContent = "지도 핀을 표시할 수 없습니다(데이터 로딩 실패).";
+
+      // keep apply button usable (base form link already in href)
+    }
+  })();
 </script>
 </body>
 </html>
