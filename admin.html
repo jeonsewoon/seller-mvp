@@ -1,569 +1,143 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>뜻밖의시장 | 관리자</title>
-  <style>
-    :root{
-      --bg:#0b0b0c; --card:#16161a; --muted:#a7a7aa; --text:#f4f4f6;
-      --line:#2a2a2f; --chip:#0f0f12; --accent:#35c759; --accent2:#ffffff;
-      --danger:#ff4d4f; --warn:#ffcc00;
-      --r:18px;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",system-ui,Segoe UI,Roboto,sans-serif}
-    a{color:#cfe7ff}
-    .wrap{max-width:1180px;margin:0 auto;padding:22px}
-    .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
-    .title{font-size:34px;font-weight:900;letter-spacing:-1px}
-    .sub{margin-top:6px;color:var(--muted);font-size:13px}
-    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:#0f0f12;color:var(--muted);font-size:12px}
-    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}
-    @media (max-width:960px){.grid{grid-template-columns:1fr}}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px}
-    .card h2{margin:0;font-size:16px}
-    .help{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.45}
-    .hr{height:1px;background:var(--line);margin:14px 0}
-    label{display:block;color:var(--muted);font-size:12px;margin:10px 0 6px}
-    input,select,textarea{
-      width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);
-      background:#0f0f12;color:var(--text);outline:none
-    }
-    textarea{min-height:92px;resize:vertical}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media (max-width:720px){.row{grid-template-columns:1fr}}
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .btn{border:0;border-radius:14px;padding:12px 14px;font-weight:900;cursor:pointer}
-    .btn.g{background:var(--accent);color:#0b0b0c}
-    .btn.w{background:var(--accent2);color:#000}
-    .btn.s{background:#2a2a2f;color:var(--text);border:1px solid var(--line)}
-    .btn.d{background:var(--danger);color:#fff}
-    .mini{font-size:12px;color:var(--muted)}
-    .list{display:flex;flex-direction:column;gap:10px;margin-top:10px}
-    .item{
-      border:1px solid var(--line);background:var(--chip);
-      border-radius:16px;padding:12px;cursor:pointer
-    }
-    .itemTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .name{font-weight:900}
-    .meta{margin-top:6px;color:var(--muted);font-size:12px}
-    .tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
-    .tag.ok{background:rgba(53,199,89,.15);color:#c8f7d2;border:1px solid rgba(53,199,89,.35)}
-    .tag.done{background:rgba(255,255,255,.08);color:#d0d0d2;border:1px solid rgba(255,255,255,.12)}
-    .tag.warn{background:rgba(255,204,0,.14);color:#ffe08a;border:1px solid rgba(255,204,0,.28)}
-    .statusBox{
-      margin-top:10px;border:1px solid var(--line);border-radius:14px;padding:10px;
-      background:#0f0f12;color:var(--muted);font-size:12px;white-space:pre-wrap
-    }
-    .authBox{max-width:520px;margin:0 auto}
-    .hide{display:none !important}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>뜻밖의시장 관리자</title>
+<meta name="theme-color" content="#0b0b0c">
+
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:#0b0b0c;color:#fff}
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+h1{font-size:26px;margin-bottom:6px}
+.muted{color:#aaa;font-size:13px}
+.card{background:#16161a;border:1px solid #2a2a2e;border-radius:14px;padding:16px;margin-top:14px}
+input,select,button{width:100%;padding:10px;border-radius:10px;border:1px solid #333;background:#000;color:#fff}
+button{background:#fff;color:#000;font-weight:800;cursor:pointer}
+button.sub{background:#222;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.listItem{padding:10px;border-bottom:1px solid #333;cursor:pointer}
+.listItem:hover{background:#222}
+.badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid #555;margin-left:6px}
+.ok{color:#7dffb3;border-color:#7dffb3}
+.danger{color:#ff8a8a;border-color:#ff8a8a}
+.hidden{display:none}
+</style>
 </head>
 
 <body>
 <div class="wrap">
-  <div class="top">
-    <div>
-      <div class="title">뜻밖의시장 관리자</div>
-      <div class="sub">행사 추가/수정/삭제 → GitHub에 저장(events.json) → 메인 화면 자동 반영</div>
-    </div>
-    <div class="pill" id="sessionPill">로그인 필요</div>
-  </div>
 
-  <!-- 로그인 -->
-  <div class="card authBox" id="authCard">
-    <h2>관리자 로그인</h2>
-    <div class="help">
-      • 관리자는 최대 3명까지 지정 가능합니다(코드 상단 ADMIN_ALLOWLIST).<br/>
-      • 이 페이지 URL은 외부에 공유하지 마세요.
-    </div>
-    <label>이메일</label>
-    <input id="loginEmail" placeholder="예: marketfindout@gmail.com" />
-    <label>PIN</label>
-    <input id="loginPin" type="password" inputmode="numeric" placeholder="예: 1234" />
-    <div class="btnRow">
-      <button class="btn w" id="loginBtn">로그인</button>
-    </div>
-    <div class="statusBox" id="authStatus"></div>
-  </div>
+<!-- 로그인 -->
+<div id="loginBox" class="card">
+  <h1>관리자 로그인</h1>
+  <input id="loginId" placeholder="ID">
+  <input id="loginPw" type="password" placeholder="Password">
+  <button onclick="login()">로그인</button>
+</div>
 
-  <!-- 본문 -->
-  <div class="grid hide" id="mainGrid">
+<!-- 관리자 -->
+<div id="adminBox" class="hidden">
 
-    <div class="card">
-      <h2>3) 행사 추가 / 수정</h2>
-      <div class="help">
-        주소/좌표는 지금은 수동 입력(MVP). 메인 화면 UI는 절대 건드리지 않습니다.<br/>
-        <span class="mini">※ 저장(목록 반영) 후 오른쪽의 “GitHub에 저장(events.json)”을 눌러야 메인에 반영됩니다.</span>
-      </div>
+<h1>행사 관리</h1>
+<div class="muted">events.json을 안전한 포맷으로만 저장합니다</div>
 
-      <label>행사 ID (자동 생성 / 수정 시 유지)</label>
-      <input id="evId" class="mono" readonly />
+<div class="card grid">
+  <input id="name" placeholder="행사명">
+  <input id="area" placeholder="지역 (예: 동탄)">
+  <input id="address" placeholder="주소 입력 후 엔터">
+  <input id="start" type="date">
+  <input id="end" type="date">
+  <input id="capacity" type="number" placeholder="정원">
+  <input id="lat" placeholder="위도" readonly>
+  <input id="lng" placeholder="경도" readonly>
+  <input id="note" placeholder="메모">
+</div>
 
-      <div class="row">
-        <div>
-          <label>행사명</label>
-          <input id="evName" placeholder="예: 동탄역 롯데캐슬" />
-        </div>
-        <div>
-          <label>지역(표시용)</label>
-          <input id="evArea" placeholder="예: 동탄 / 용인 / 수원" />
-        </div>
-      </div>
+<button onclick="addEvent()">행사 추가 / 수정</button>
 
-      <div class="row">
-        <div>
-          <label>시작일</label>
-          <input id="evStart" placeholder="YYYY-MM-DD" />
-        </div>
-        <div>
-          <label>종료일</label>
-          <input id="evEnd" placeholder="YYYY-MM-DD" />
-        </div>
-      </div>
+<div class="card">
+  <h2>행사 목록</h2>
+  <div id="list"></div>
+</div>
 
-      <label>주소 (실제 존재하는 주소/아파트명)</label>
-      <input id="evAddr" placeholder="예: 경기도 화성시 동탄... / 동탄역파라곤" />
+<button class="sub" onclick="saveGitHub()">GitHub에 저장 (events.json)</button>
 
-      <div class="row">
-        <div>
-          <label>위도(lat)</label>
-          <input id="evLat" placeholder="예: 37.2000" />
-        </div>
-        <div>
-          <label>경도(lng)</label>
-          <input id="evLng" placeholder="예: 127.0700" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>정원(capacity)</label>
-          <input id="evCap" type="number" min="0" step="1" value="0" />
-        </div>
-        <div>
-          <label>현재(current)</label>
-          <input id="evCur" type="number" min="0" step="1" value="0" />
-        </div>
-      </div>
-
-      <label>비고(운영 메모)</label>
-      <textarea id="evNote" placeholder="예: 전기/주차/반입 동선 등"></textarea>
-
-      <div class="btnRow">
-        <button class="btn g" id="newBtn">새 행사</button>
-        <button class="btn w" id="saveBtn">저장(목록 반영)</button>
-        <button class="btn d" id="delBtn">삭제</button>
-        <button class="btn s" id="resetBtn">입력 초기화</button>
-      </div>
-
-      <div class="statusBox" id="editStatus"></div>
-    </div>
-
-    <div class="card">
-      <h2>4) 행사 목록</h2>
-      <div class="help">
-        행사를 클릭하면 수정 모드로 들어갑니다. 정원 완료면 자동으로 “마감” 태그가 붙습니다.
-      </div>
-
-      <div class="hr"></div>
-
-      <h2 style="margin-top:0">GitHub 연동</h2>
-      <div class="help">
-        • 토큰은 이 브라우저(기기)에만 저장됩니다(LocalStorage).<br/>
-        • 권한: Fine-grained token → Contents: Read & Write / repo: seller-mvp 선택
-      </div>
-
-      <label>Repository</label>
-      <div class="mono" id="repoLine"></div>
-
-      <label>GitHub Token</label>
-      <input id="ghToken" type="password" placeholder="github_pat_..." />
-
-      <div class="btnRow">
-        <button class="btn s" id="saveTokenBtn">토큰 저장</button>
-        <button class="btn s" id="clearTokenBtn">토큰 삭제</button>
-      </div>
-
-      <div class="btnRow">
-        <button class="btn w" id="loadGhBtn">GitHub에서 불러오기</button>
-        <button class="btn g" id="saveGhBtn">GitHub에 저장(events.json)</button>
-        <button class="btn s" id="csvBtn">CSV 내보내기</button>
-      </div>
-
-      <div class="statusBox" id="ghStatus"></div>
-
-      <div class="hr"></div>
-
-      <div class="list" id="list"></div>
-
-      <div class="btnRow">
-        <button class="btn s" id="logoutBtn">로그아웃</button>
-      </div>
-    </div>
-
-  </div>
+</div>
 </div>
 
 <script>
-/** ==========================
- *  설정(여기만 바꾸면 됨)
- * ========================== */
-const GH_OWNER = "jeonsewoon";
-const GH_REPO  = "seller-mvp";
-const GH_BRANCH = "main";
-const GH_PATH = "events.json";
+/* 관리자 계정 */
+const ADMINS=["staff1","staff2","staff3"];
+const PASSWORD="market2026!";
+let EVENTS=[];
 
-// 관리자 최대 3명 (원하면 내일 여기만 바꾸면 됨)
-const ADMIN_ALLOWLIST = [
-  { email: "marketfindout@gmail.com", pin: "1234" },
-  // { email: "admin2@email.com", pin: "2345" },
-  // { email: "admin3@email.com", pin: "3456" },
-];
-
-const LS = {
-  session: "um_admin_session",
-  token: "um_gh_token",
-  events: "um_admin_events_cache",
-};
-
-const $ = (id)=>document.getElementById(id);
-const now = ()=>Date.now();
-const uid = ()=>"ev_"+crypto.getRandomValues(new Uint32Array(4)).join("").slice(0,16);
-
-function isFull(e){ return Number(e.capacity||0)>0 && Number(e.current||0) >= Number(e.capacity||0); }
-function cleanNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
-function msg(el, text){ el.textContent = text || ""; }
-
-function setSession(email){
-  // 6시간 세션
-  localStorage.setItem(LS.session, JSON.stringify({email, exp: now() + 6*60*60*1000}));
-}
-function getSession(){
-  try{
-    const s = JSON.parse(localStorage.getItem(LS.session)||"null");
-    if(!s) return null;
-    if(now() > s.exp){ localStorage.removeItem(LS.session); return null; }
-    return s;
-  }catch{ return null; }
-}
-function clearSession(){
-  localStorage.removeItem(LS.session);
+/* 로그인 */
+function login(){
+  const id=document.getElementById("loginId").value;
+  const pw=document.getElementById("loginPw").value;
+  if(ADMINS.includes(id)&&pw===PASSWORD){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("adminBox").classList.remove("hidden");
+    loadEvents();
+  }else alert("로그인 실패");
 }
 
-let EVENTS = [];
-let EDITING_ID = null;
-
-function setPill(text){
-  $("sessionPill").textContent = text;
+/* 이벤트 로드 */
+async function loadEvents(){
+  const res=await fetch("./events.json?ts="+Date.now());
+  EVENTS=await res.json();
+  render();
 }
 
-function showMain(){
-  $("authCard").classList.add("hide");
-  $("mainGrid").classList.remove("hide");
-}
-function showAuth(){
-  $("mainGrid").classList.add("hide");
-  $("authCard").classList.remove("hide");
-}
-
-function loadCache(){
-  try{
-    const arr = JSON.parse(localStorage.getItem(LS.events)||"[]");
-    if(Array.isArray(arr)) EVENTS = arr;
-  }catch{}
-}
-function saveCache(){
-  localStorage.setItem(LS.events, JSON.stringify(EVENTS));
+/* 주소 → 위경도 */
+async function geocode(addr){
+  const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`);
+  const d=await r.json();
+  if(!d[0]) return null;
+  return {lat:Number(d[0].lat),lng:Number(d[0].lon)};
 }
 
-function resetForm(newId=true){
-  EDITING_ID = null;
-  $("evId").value = newId ? uid() : "";
-  $("evName").value = "";
-  $("evArea").value = "";
-  $("evStart").value = "";
-  $("evEnd").value = "";
-  $("evAddr").value = "";
-  $("evLat").value = "";
-  $("evLng").value = "";
-  $("evCap").value = 0;
-  $("evCur").value = 0;
-  $("evNote").value = "";
-  msg($("editStatus"), "입력 대기");
-}
+document.getElementById("address").addEventListener("change",async e=>{
+  const g=await geocode(e.target.value);
+  if(g){lat.value=g.lat;lng.value=g.lng;}
+});
 
-function fillForm(e){
-  EDITING_ID = e.id;
-  $("evId").value = e.id;
-  $("evName").value = e.name||"";
-  $("evArea").value = e.area||"";
-  $("evStart").value = e.start||"";
-  $("evEnd").value = e.end||"";
-  $("evAddr").value = e.address||"";
-  $("evLat").value = (e.lat==null?"":String(e.lat));
-  $("evLng").value = (e.lng==null?"":String(e.lng));
-  $("evCap").value = cleanNum(e.capacity);
-  $("evCur").value = cleanNum(e.current);
-  $("evNote").value = e.note||"";
-  msg($("editStatus"), "수정 모드: 저장(목록 반영) → GitHub 저장(events.json)");
-}
-
-function upsertFromForm(){
-  const e = {
-    id: $("evId").value.trim() || uid(),
-    name: $("evName").value.trim(),
-    area: $("evArea").value.trim(),
-    start: $("evStart").value.trim(),
-    end: $("evEnd").value.trim(),
-    address: $("evAddr").value.trim(),
-    lat: $("evLat").value.trim()==="" ? null : Number($("evLat").value.trim()),
-    lng: $("evLng").value.trim()==="" ? null : Number($("evLng").value.trim()),
-    capacity: cleanNum($("evCap").value),
-    current: cleanNum($("evCur").value),
-    note: $("evNote").value.trim(),
+/* 추가/수정 */
+function addEvent(){
+  const ev={
+    id:"ev_"+Date.now(),
+    name:name.value,
+    area:area.value,
+    start:start.value,
+    end:end.value,
+    address:address.value,
+    lat:Number(lat.value)||null,
+    lng:Number(lng.value)||null,
+    capacity:Number(capacity.value)||0,
+    current:0,
+    note:note.value
   };
-
-  if(!e.name){ alert("행사명을 입력하세요."); return; }
-  if(!e.start || !e.end){ alert("시작일/종료일을 입력하세요(YYYY-MM-DD)."); return; }
-
-  const idx = EVENTS.findIndex(x=>x.id===e.id);
-  if(idx>=0) EVENTS[idx]=e; else EVENTS.unshift(e);
-  saveCache();
-  renderList();
-  msg($("editStatus"), "목록 반영 완료. 이제 “GitHub에 저장(events.json)”을 눌러 반영하세요.");
+  EVENTS.push(ev);
+  render();
 }
 
-function deleteCurrent(){
-  const id = $("evId").value.trim();
-  if(!id) return;
-  const idx = EVENTS.findIndex(x=>x.id===id);
-  if(idx<0){ alert("삭제할 행사가 목록에 없습니다."); return; }
-  if(!confirm("정말 삭제할까요?")) return;
-  EVENTS.splice(idx,1);
-  saveCache();
-  renderList();
-  resetForm(true);
-  msg($("editStatus"), "삭제 완료. GitHub 저장을 눌러 반영하세요.");
-}
-
-function renderList(){
-  const el = $("list");
-  el.innerHTML = "";
-  const sorted = EVENTS.slice().sort((a,b)=>(a.start||"").localeCompare(b.start||""));
-  sorted.forEach(e=>{
-    const full = isFull(e);
-    const tag = full ? `<span class="tag done">마감</span>` : `<span class="tag ok">모집중</span>`;
-    const div = document.createElement("div");
-    div.className="item";
-    div.innerHTML = `
-      <div class="itemTop">
-        <div>
-          <div class="name">${escapeHtml(e.name||"")}</div>
-          <div class="meta">${escapeHtml(e.start||"")} ~ ${escapeHtml(e.end||"")} · ${escapeHtml(e.area||"")}</div>
-          <div class="meta">${escapeHtml(e.address||"")}</div>
-        </div>
-        <div style="text-align:right">
-          ${tag}
-          <div class="meta">${cleanNum(e.current)} / ${cleanNum(e.capacity)} 팀</div>
-        </div>
-      </div>
-    `;
-    div.addEventListener("click", ()=>fillForm(e));
-    el.appendChild(div);
+/* 렌더 */
+function render(){
+  list.innerHTML="";
+  EVENTS.forEach(e=>{
+    const d=document.createElement("div");
+    d.className="listItem";
+    d.innerHTML=`<b>${e.name}</b><span class="badge ok">${e.area}</span>`;
+    list.appendChild(d);
   });
 }
 
-function escapeHtml(s){
-  return String(s??"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+/* GitHub 저장 */
+async function saveGitHub(){
+  alert("※ GitHub API 연동은 다음 단계에서 연결됩니다.\n지금은 events.json을 직접 수정해 주세요.");
 }
-
-/** ==========================
- *  GitHub API (REST)
- * ========================== */
-function getToken(){ return localStorage.getItem(LS.token)||""; }
-function setToken(t){ localStorage.setItem(LS.token, t); }
-function clearToken(){ localStorage.removeItem(LS.token); }
-
-function ghHeaders(){
-  const t = getToken();
-  return {
-    "Accept": "application/vnd.github+json",
-    "Authorization": "Bearer " + t,
-    "X-GitHub-Api-Version": "2022-11-28",
-  };
-}
-
-function b64encode(str){
-  // UTF-8 safe base64
-  return btoa(unescape(encodeURIComponent(str)));
-}
-function b64decode(b64){
-  return decodeURIComponent(escape(atob(b64)));
-}
-
-async function ghGetFile(){
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}?ref=${GH_BRANCH}`;
-  const res = await fetch(url, {headers: ghHeaders()});
-  if(res.status===404) return {exists:false};
-  const data = await res.json();
-  if(!res.ok) throw new Error(`${res.status} ${data?.message||"GitHub 읽기 실패"}`);
-  return {exists:true, sha:data.sha, content: b64decode((data.content||"").replace(/\n/g,""))};
-}
-
-async function ghPutFile(contentStr){
-  const prev = await ghGetFile().catch(err=>{
-    // 401/403 등은 여기서 그대로 던지기
-    throw err;
-  });
-
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
-  const body = {
-    message: `update ${GH_PATH}`,
-    content: b64encode(contentStr),
-    branch: GH_BRANCH,
-  };
-  if(prev.exists) body.sha = prev.sha;
-
-  const res = await fetch(url, {
-    method:"PUT",
-    headers: {...ghHeaders(), "Content-Type":"application/json"},
-    body: JSON.stringify(body),
-  });
-  const data = await res.json();
-  if(!res.ok) throw new Error(`${res.status} ${data?.message||"GitHub 저장 실패"}`);
-  return data;
-}
-
-function toCSV(arr){
-  const cols = ["id","name","area","start","end","address","lat","lng","capacity","current","note"];
-  const lines = [cols.join(",")];
-  for(const e of arr){
-    const row = cols.map(k=>{
-      const v = e[k]==null ? "" : String(e[k]);
-      const safe = `"${v.replaceAll('"','""')}"`;
-      return safe;
-    }).join(",");
-    lines.push(row);
-  }
-  return lines.join("\n");
-}
-
-function downloadFile(filename, content){
-  const blob = new Blob([content], {type:"text/plain;charset=utf-8"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href), 500);
-}
-
-/** ==========================
- *  Auth / Boot
- * ========================== */
-$("repoLine").textContent = `${GH_OWNER}/${GH_REPO} (branch: ${GH_BRANCH}, file: /${GH_PATH})`;
-
-$("loginBtn").addEventListener("click", ()=>{
-  const email = $("loginEmail").value.trim().toLowerCase();
-  const pin = $("loginPin").value.trim();
-  const ok = ADMIN_ALLOWLIST.some(a=>a.email.toLowerCase()===email && a.pin===pin);
-  if(!ok){
-    msg($("authStatus"), "로그인 실패: 이메일/PIN이 관리자 목록과 일치하지 않습니다.");
-    return;
-  }
-  setSession(email);
-  setPill(`관리자 모드 · ${email}`);
-  msg($("authStatus"), "");
-  showMain();
-});
-
-$("logoutBtn").addEventListener("click", ()=>{
-  clearSession();
-  setPill("로그인 필요");
-  showAuth();
-});
-
-$("newBtn").addEventListener("click", ()=>resetForm(true));
-$("resetBtn").addEventListener("click", ()=>resetForm(true));
-$("saveBtn").addEventListener("click", upsertFromForm);
-$("delBtn").addEventListener("click", deleteCurrent);
-
-$("saveTokenBtn").addEventListener("click", ()=>{
-  const t = $("ghToken").value.trim();
-  if(!t){ alert("토큰을 붙여넣으세요."); return; }
-  setToken(t);
-  msg($("ghStatus"), "토큰 저장 완료. 이제 “GitHub에 저장(events.json)”을 눌러보세요.");
-});
-
-$("clearTokenBtn").addEventListener("click", ()=>{
-  clearToken();
-  $("ghToken").value="";
-  msg($("ghStatus"), "토큰 삭제 완료.");
-});
-
-$("loadGhBtn").addEventListener("click", async ()=>{
-  try{
-    msg($("ghStatus"), "GitHub에서 불러오는 중...");
-    if(!getToken()) throw new Error("토큰이 없습니다. 먼저 토큰을 저장하세요.");
-    const f = await ghGetFile();
-    if(!f.exists){
-      msg($("ghStatus"), "events.json이 아직 없습니다. 먼저 행사 추가 후 저장하세요.");
-      return;
-    }
-    const arr = JSON.parse(f.content||"[]");
-    if(!Array.isArray(arr)) throw new Error("events.json 형식이 올바르지 않습니다(배열 아님).");
-    EVENTS = arr;
-    saveCache();
-    renderList();
-    msg($("ghStatus"), "불러오기 성공. (로컬 목록 갱신 완료)");
-  }catch(e){
-    msg($("ghStatus"), "불러오기 실패\n" + e.message + "\n\n※ 401 Bad credentials면 토큰 권한/오타/만료를 확인하세요.");
-  }
-});
-
-$("saveGhBtn").addEventListener("click", async ()=>{
-  try{
-    msg($("ghStatus"), "GitHub에 저장 중...");
-    if(!getToken()) throw new Error("토큰이 없습니다. 먼저 토큰을 저장하세요.");
-    const contentStr = JSON.stringify(EVENTS, null, 2);
-    await ghPutFile(contentStr);
-    msg($("ghStatus"), "저장 성공! 이제 메인 화면을 새로고침하면 자동 반영됩니다.\nhttps://jeonsewoon.github.io/seller-mvp/");
-  }catch(e){
-    msg($("ghStatus"), "저장 실패\n" + e.message + "\n\n※ 401 Bad credentials면: 토큰을 새로 만들고 Contents(Read&Write) + repo(seller-mvp) 선택 후 다시 저장하세요.");
-  }
-});
-
-$("csvBtn").addEventListener("click", ()=>{
-  const csv = toCSV(EVENTS);
-  downloadFile("events.csv", csv);
-  msg($("ghStatus"), "CSV 다운로드 완료(events.csv)");
-});
-
-(function boot(){
-  const s = getSession();
-  if(s){
-    setPill(`관리자 모드 · ${s.email}`);
-    showMain();
-  }else{
-    setPill("로그인 필요");
-    showAuth();
-  }
-
-  // cache load
-  loadCache();
-  renderList();
-  resetForm(true);
-
-  // token preload (표시만)
-  const t = getToken();
-  if(t) $("ghToken").value = t;
-})();
 </script>
+
 </body>
 </html>
