@@ -1,143 +1,953 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>뜻밖의시장 관리자</title>
-<meta name="theme-color" content="#0b0b0c">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0c">
+  <title>뜻밖의시장 | 관리자</title>
 
-<style>
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;background:#0b0b0c;color:#fff}
-.wrap{max-width:1100px;margin:0 auto;padding:20px}
-h1{font-size:26px;margin-bottom:6px}
-.muted{color:#aaa;font-size:13px}
-.card{background:#16161a;border:1px solid #2a2a2e;border-radius:14px;padding:16px;margin-top:14px}
-input,select,button{width:100%;padding:10px;border-radius:10px;border:1px solid #333;background:#000;color:#fff}
-button{background:#fff;color:#000;font-weight:800;cursor:pointer}
-button.sub{background:#222;color:#fff}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.listItem{padding:10px;border-bottom:1px solid #333;cursor:pointer}
-.listItem:hover{background:#222}
-.badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid #555;margin-left:6px}
-.ok{color:#7dffb3;border-color:#7dffb3}
-.danger{color:#ff8a8a;border-color:#ff8a8a}
-.hidden{display:none}
-</style>
+  <style>
+    :root{
+      --bg:#0b0b0c; --card:#16161a; --soft:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.12); --muted:#b2b2b8;
+      --ok:rgba(170,255,205,.95); --bad:rgba(255,180,180,.95);
+    }
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:#f4f4f6}
+    .wrap{max-width:1100px;margin:0 auto;padding:20px 16px 92px}
+    h1{font-size:24px;margin:0 0 6px}
+    h2{font-size:16px;margin:0 0 10px}
+    .muted{color:var(--muted);font-size:13px;line-height:1.5}
+    .card{margin-top:14px;padding:16px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+    .hr{height:1px;background:var(--line);margin:14px 0}
+    .grid{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:860px){ .grid{grid-template-columns:1fr 1fr 1fr} }
+    label{display:block;font-size:12px;color:#d0d0d6;margin:10px 0 6px}
+    input,select,textarea{
+      width:100%;padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25);color:#fff;font-size:14px;outline:none
+    }
+    textarea{min-height:86px;resize:vertical}
+    input::placeholder{color:rgba(255,255,255,.35)}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .btn{border:0;padding:12px 14px;border-radius:14px;background:#fff;color:#000;font-weight:900;cursor:pointer}
+    .btn.sub{background:rgba(255,255,255,.10);color:#fff;font-weight:800;border:1px solid rgba(255,255,255,.16)}
+    .btn.danger{background:rgba(255,120,120,.10);color:#ffdede;border:1px solid rgba(255,120,120,.25)}
+    .pill{display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.16);color:#cfcfd3;background:rgba(255,255,255,.05)}
+    .pill.ok{border-color:rgba(120,255,180,.22);color:var(--ok);background:rgba(120,255,180,.06)}
+    .pill.bad{border-color:rgba(255,120,120,.22);color:var(--bad);background:rgba(255,120,120,.06)}
+    .list{display:flex;flex-direction:column;gap:8px}
+    .item{
+      padding:12px;border-radius:14px;background:var(--soft);border:1px solid var(--line);
+      cursor:pointer
+    }
+    .item b{font-size:15px}
+    .row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .tiny{font-size:12px;color:var(--muted)}
+    .toast{
+      position:fixed;left:50%;transform:translateX(-50%);
+      bottom:16px;z-index:50;background:rgba(0,0,0,.82);
+      border:1px solid rgba(255,255,255,.18);padding:10px 12px;border-radius:999px;
+      font-size:13px;display:none;max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+    }
+    .warn{
+      margin-top:10px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,200,120,.22);
+      background:rgba(255,200,120,.06);color:rgba(255,240,220,.95);font-size:13px;line-height:1.5;white-space:pre-wrap
+    }
+    .err{
+      margin-top:10px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,120,120,.22);
+      background:rgba(255,120,120,.06);color:#ffdede;font-size:13px;line-height:1.5;white-space:pre-wrap
+    }
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid rgba(255,255,255,.10);padding:8px 6px;font-size:13px;vertical-align:top}
+    th{color:#ddd;text-align:left;font-size:12px}
+    .right{text-align:right}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+  </style>
 </head>
 
 <body>
 <div class="wrap">
+  <h1>뜻밖의시장 관리자</h1>
+  <div class="muted">A) events.json 안 깨지게 저장 · B) 주소→위경도 자동 · C) 신청관리(승인/불가/강퇴 + CSV)</div>
 
-<!-- 로그인 -->
-<div id="loginBox" class="card">
-  <h1>관리자 로그인</h1>
-  <input id="loginId" placeholder="ID">
-  <input id="loginPw" type="password" placeholder="Password">
-  <button onclick="login()">로그인</button>
+  <!-- 로그인 -->
+  <div class="card" id="loginCard">
+    <h2>관리자 로그인</h2>
+    <div class="muted">ID: staff1 / staff2 / staff3</div>
+    <div class="hr"></div>
+    <div class="grid">
+      <div>
+        <label>ID</label>
+        <input id="loginId" placeholder="staff1">
+      </div>
+      <div>
+        <label>Password</label>
+        <input id="loginPw" type="password" placeholder="(관리자 비밀번호)">
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button class="btn" id="loginBtn">로그인</button>
+      </div>
+    </div>
+    <div class="warn" id="loginHint" style="display:none"></div>
+  </div>
+
+  <!-- 설정(토큰) -->
+  <div class="card" id="settingsCard" style="display:none">
+    <h2>GitHub 저장 설정</h2>
+    <div class="muted">GitHub에 events.json / applications.json / blocklist.json을 저장하려면 토큰이 필요합니다.</div>
+    <div class="hr"></div>
+    <div class="grid">
+      <div>
+        <label>Repo Owner</label>
+        <input id="ghOwner" value="jeonsewoon">
+      </div>
+      <div>
+        <label>Repo Name</label>
+        <input id="ghRepo" value="seller-mvp">
+      </div>
+      <div>
+        <label>Branch</label>
+        <input id="ghBranch" value="main">
+      </div>
+      <div style="grid-column:1/-1">
+        <label>GitHub Fine-grained PAT (Contents: Read & write)</label>
+        <input id="ghToken" placeholder="github_pat_... (여기에 붙여넣기)">
+        <div class="tiny">토큰은 이 브라우저(localStorage)에만 저장됩니다. 다른 사람에게 절대 공유하지 마세요.</div>
+      </div>
+    </div>
+    <div class="btnRow">
+      <button class="btn" id="saveTokenBtn">토큰 저장</button>
+      <button class="btn sub" id="clearTokenBtn">토큰 삭제</button>
+      <span class="pill" id="tokenStatus">토큰: 없음</span>
+    </div>
+  </div>
+
+  <!-- 행사 관리 -->
+  <div class="card" id="eventsCard" style="display:none">
+    <h2>행사 관리</h2>
+    <div class="muted">events.json을 읽고, 표준 영문 키로만 저장합니다. (start/end/capacity/lat/lng 고정)</div>
+    <div class="hr"></div>
+
+    <div class="grid">
+      <div style="grid-column:1/-1">
+        <span class="pill ok">필수: 행사명 · 시작/종료 · 정원</span>
+        <span class="pill">주소 입력 후 “위치찾기”</span>
+      </div>
+
+      <div>
+        <label>행사명 *</label>
+        <input id="ev_name" placeholder="예) 동탄역파라곤">
+      </div>
+      <div>
+        <label>지역(area)</label>
+        <input id="ev_area" placeholder="예) 동탄">
+      </div>
+      <div>
+        <label>정원(capacity) *</label>
+        <input id="ev_capacity" type="number" placeholder="예) 30">
+      </div>
+
+      <div>
+        <label>시작(start) *</label>
+        <input id="ev_start" type="date">
+      </div>
+      <div>
+        <label>종료(end) *</label>
+        <input id="ev_end" type="date">
+      </div>
+      <div>
+        <label>현재(current)</label>
+        <input id="ev_current" type="number" placeholder="예) 0">
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label>주소(address)</label>
+        <input id="ev_address" placeholder="예) 경기도 화성시 동탄기흥로 393-20">
+        <div class="btnRow">
+          <button class="btn sub" id="geocodeBtn" type="button">위치찾기(주소→위경도)</button>
+          <span class="pill" id="geoStatus">위경도: -</span>
+        </div>
+      </div>
+
+      <div>
+        <label>위도(lat)</label>
+        <input id="ev_lat" class="mono" placeholder="자동" readonly>
+      </div>
+      <div>
+        <label>경도(lng)</label>
+        <input id="ev_lng" class="mono" placeholder="자동" readonly>
+      </div>
+      <div>
+        <label>메모(note)</label>
+        <input id="ev_note" placeholder="선택">
+      </div>
+    </div>
+
+    <div class="btnRow">
+      <button class="btn" id="addUpdateBtn" type="button">행사 추가/수정 저장(로컬)</button>
+      <button class="btn sub" id="resetFormBtn" type="button">입력 초기화</button>
+      <button class="btn danger" id="deleteBtn" type="button" disabled>선택 행사 삭제</button>
+    </div>
+
+    <div class="hr"></div>
+    <div class="btnRow">
+      <button class="btn sub" id="reloadEventsBtn" type="button">events.json 다시 불러오기</button>
+      <button class="btn" id="saveEventsToGitBtn" type="button">GitHub에 저장(events.json)</button>
+      <span class="pill" id="eventsCount">0개</span>
+    </div>
+
+    <div id="eventsErr" class="err" style="display:none"></div>
+
+    <div class="hr"></div>
+    <div class="list" id="eventsList"></div>
+  </div>
+
+  <!-- 신청 관리 -->
+  <div class="card" id="appsCard" style="display:none">
+    <h2>셀러 신청 관리</h2>
+    <div class="muted">
+      - Google Form 응답은 지금은 자동으로 못 읽습니다(MVP 제한).<br>
+      - 대신 여기서 <b>신청 목록을 붙여넣기/CSV 업로드</b>로 관리하고, <b>CSV로 내보내기</b> 가능합니다.
+    </div>
+    <div class="hr"></div>
+
+    <div class="grid">
+      <div style="grid-column:1/-1">
+        <label>신청 데이터(JSON) 붙여넣기 (선택)</label>
+        <textarea id="appsJson" placeholder='예: [{"timestamp":"...","eventId":"...","brand":"...","phone":"...","status":"대기"}]'></textarea>
+      </div>
+      <div>
+        <label>또는 CSV 업로드</label>
+        <input id="appsCsvFile" type="file" accept=".csv,text/csv">
+        <div class="tiny">CSV 컬럼 예: timestamp,eventId,eventName,brand,owner,phone,email,category,instagram,status</div>
+      </div>
+      <div>
+        <label>상태 일괄 설정</label>
+        <select id="bulkStatus">
+          <option value="">선택</option>
+          <option value="대기">대기</option>
+          <option value="승인">승인</option>
+          <option value="불가">불가</option>
+          <option value="강퇴">강퇴</option>
+        </select>
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button class="btn sub" id="applyBulkBtn" type="button">선택행 일괄적용</button>
+      </div>
+    </div>
+
+    <div class="btnRow">
+      <button class="btn sub" id="loadAppsFromGitBtn" type="button">GitHub에서 불러오기(applications.json)</button>
+      <button class="btn" id="saveAppsToGitBtn" type="button">GitHub에 저장(applications.json)</button>
+      <button class="btn sub" id="exportCsvBtn" type="button">CSV 내보내기</button>
+      <span class="pill" id="appsCount">0건</span>
+    </div>
+
+    <div id="appsErr" class="err" style="display:none"></div>
+
+    <div class="hr"></div>
+    <div class="muted">신청 목록 (체크 후 상태 변경 가능)</div>
+    <div class="hr"></div>
+    <div style="overflow:auto">
+      <table>
+        <thead>
+          <tr>
+            <th class="right">선택</th>
+            <th>행사</th>
+            <th>브랜드/대표</th>
+            <th>연락처</th>
+            <th>상태</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody id="appsTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 강퇴 리스트 -->
+  <div class="card" id="blockCard" style="display:none">
+    <h2>강퇴/차단 목록</h2>
+    <div class="muted">전화번호 기준으로 차단합니다. (메인에서 연동은 다음 단계에서 붙이면 됨)</div>
+    <div class="hr"></div>
+
+    <div class="grid">
+      <div style="grid-column:1/-1">
+        <label>차단 전화번호 추가</label>
+        <input id="blockPhone" placeholder="01012345678">
+        <div class="btnRow">
+          <button class="btn sub" id="addBlockBtn" type="button">차단 추가</button>
+          <button class="btn danger" id="clearBlockBtn" type="button">전체 삭제</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="btnRow">
+      <button class="btn sub" id="loadBlockFromGitBtn" type="button">GitHub에서 불러오기(blocklist.json)</button>
+      <button class="btn" id="saveBlockToGitBtn" type="button">GitHub에 저장(blocklist.json)</button>
+      <span class="pill" id="blockCount">0개</span>
+    </div>
+
+    <div id="blockErr" class="err" style="display:none"></div>
+    <div class="hr"></div>
+    <div class="list" id="blockList"></div>
+  </div>
 </div>
 
-<!-- 관리자 -->
-<div id="adminBox" class="hidden">
-
-<h1>행사 관리</h1>
-<div class="muted">events.json을 안전한 포맷으로만 저장합니다</div>
-
-<div class="card grid">
-  <input id="name" placeholder="행사명">
-  <input id="area" placeholder="지역 (예: 동탄)">
-  <input id="address" placeholder="주소 입력 후 엔터">
-  <input id="start" type="date">
-  <input id="end" type="date">
-  <input id="capacity" type="number" placeholder="정원">
-  <input id="lat" placeholder="위도" readonly>
-  <input id="lng" placeholder="경도" readonly>
-  <input id="note" placeholder="메모">
-</div>
-
-<button onclick="addEvent()">행사 추가 / 수정</button>
-
-<div class="card">
-  <h2>행사 목록</h2>
-  <div id="list"></div>
-</div>
-
-<button class="sub" onclick="saveGitHub()">GitHub에 저장 (events.json)</button>
-
-</div>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-/* 관리자 계정 */
-const ADMINS=["staff1","staff2","staff3"];
-const PASSWORD="market2026!";
-let EVENTS=[];
+/*** ====== 관리자 로그인(로컬) ====== ***/
+const ADMIN_IDS = ["staff1","staff2","staff3"];
+// 비번은 여기서 바꿔도 됨
+const ADMIN_PASSWORD = "market2026!";
+const LS_AUTH = "um_admin_auth_v1";
+const LS_GH = "um_gh_settings_v1";
 
-/* 로그인 */
-function login(){
-  const id=document.getElementById("loginId").value;
-  const pw=document.getElementById("loginPw").value;
-  if(ADMINS.includes(id)&&pw===PASSWORD){
-    document.getElementById("loginBox").classList.add("hidden");
-    document.getElementById("adminBox").classList.remove("hidden");
-    loadEvents();
-  }else alert("로그인 실패");
+/*** ====== 표준 스키마 ====== ***/
+const EVENT_KEYS = ["id","name","area","start","end","address","lat","lng","capacity","current","note"];
+const STATUS_VALUES = ["대기","승인","불가","강퇴"];
+
+let EVENTS = [];
+let selectedEventId = null;
+
+let APPLICATIONS = [];
+let BLOCKLIST = []; // phone list
+
+/*** ====== DOM ====== ***/
+const $ = (id)=>document.getElementById(id);
+const toastEl = $("toast");
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.style.display = "block";
+  clearTimeout(window.__t);
+  window.__t = setTimeout(()=> toastEl.style.display="none", 2000);
 }
-
-/* 이벤트 로드 */
-async function loadEvents(){
-  const res=await fetch("./events.json?ts="+Date.now());
-  EVENTS=await res.json();
-  render();
+function showErr(elId, msg){
+  const el = $(elId);
+  el.style.display = msg ? "block" : "none";
+  el.textContent = msg || "";
 }
+function safeStr(v){ return (v==null) ? "" : String(v); }
+function num(v, d=0){ const n = Number(v); return Number.isFinite(n) ? n : d; }
 
-/* 주소 → 위경도 */
-async function geocode(addr){
-  const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`);
-  const d=await r.json();
-  if(!d[0]) return null;
-  return {lat:Number(d[0].lat),lng:Number(d[0].lon)};
+/*** ====== GitHub 설정 ====== ***/
+function loadGh(){
+  try { return JSON.parse(localStorage.getItem(LS_GH)) || {}; } catch { return {}; }
 }
-
-document.getElementById("address").addEventListener("change",async e=>{
-  const g=await geocode(e.target.value);
-  if(g){lat.value=g.lat;lng.value=g.lng;}
-});
-
-/* 추가/수정 */
-function addEvent(){
-  const ev={
-    id:"ev_"+Date.now(),
-    name:name.value,
-    area:area.value,
-    start:start.value,
-    end:end.value,
-    address:address.value,
-    lat:Number(lat.value)||null,
-    lng:Number(lng.value)||null,
-    capacity:Number(capacity.value)||0,
-    current:0,
-    note:note.value
+function saveGh(obj){
+  localStorage.setItem(LS_GH, JSON.stringify(obj));
+  refreshTokenStatus();
+}
+function getGh(){
+  const s = loadGh();
+  return {
+    owner: s.owner || $("ghOwner").value.trim(),
+    repo: s.repo || $("ghRepo").value.trim(),
+    branch: s.branch || $("ghBranch").value.trim(),
+    token: s.token || $("ghToken").value.trim()
   };
-  EVENTS.push(ev);
-  render();
+}
+function refreshTokenStatus(){
+  const s = loadGh();
+  const ok = !!(s.token && s.owner && s.repo && s.branch);
+  $("tokenStatus").textContent = ok ? "토큰: 저장됨" : "토큰: 없음";
+  $("tokenStatus").className = ok ? "pill ok" : "pill";
+  if(s.owner) $("ghOwner").value = s.owner;
+  if(s.repo) $("ghRepo").value = s.repo;
+  if(s.branch) $("ghBranch").value = s.branch;
+  if(s.token) $("ghToken").value = s.token;
 }
 
-/* 렌더 */
-function render(){
-  list.innerHTML="";
-  EVENTS.forEach(e=>{
-    const d=document.createElement("div");
-    d.className="listItem";
-    d.innerHTML=`<b>${e.name}</b><span class="badge ok">${e.area}</span>`;
-    list.appendChild(d);
+/*** ====== GitHub API helpers ====== ***/
+async function ghGetFile(path){
+  const {owner,repo,branch} = getGh();
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${encodeURIComponent(branch)}`;
+  const res = await fetch(url, { headers: { "Accept":"application/vnd.github+json" }});
+  if(!res.ok) throw new Error(`GitHub GET 실패: ${path} (${res.status})`);
+  return await res.json(); // {content, sha, ...}
+}
+async function ghPutFile(path, contentText, message){
+  const {owner,repo,branch,token} = getGh();
+  if(!token) throw new Error("토큰이 없습니다. 상단에서 토큰 저장 후 다시 시도하세요.");
+
+  // 최신 sha 가져오기(존재하면)
+  let sha = null;
+  try {
+    const cur = await ghGetFile(path);
+    sha = cur.sha;
+  } catch(e){
+    // 파일이 없는 경우(404)면 새로 생성 허용
+    if(!String(e.message).includes("(404)")) throw e;
+  }
+
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+  const body = {
+    message,
+    content: btoa(unescape(encodeURIComponent(contentText))), // UTF-8 safe base64
+    branch
+  };
+  if(sha) body.sha = sha;
+
+  const res = await fetch(url, {
+    method:"PUT",
+    headers:{
+      "Accept":"application/vnd.github+json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify(body)
+  });
+
+  if(res.status === 401) throw new Error("401 Bad credentials (토큰 권한/만료). Fine-grained 토큰 Contents(Read&Write) + repo(seller-mvp) 확인.");
+  if(res.status === 409) throw new Error("409 Conflict (파일 sha 불일치). '다시 불러오기' 후 저장하세요.");
+  if(!res.ok) throw new Error(`GitHub PUT 실패: ${path} (${res.status})`);
+  return await res.json();
+}
+
+/*** ====== events.json 로딩/정규화 ====== ***/
+function normalizeEvent(raw){
+  // 한글 키가 들어와도 모두 영문으로 정규화
+  // raw에 아래처럼 섞여와도: 시작/끝/위도/용량/수용 능력/메모/주소...
+  const area = safeStr(raw.area ?? raw["지역"] ?? raw["area"]).replace(/\u200B|\u200C|\u200D|\uFEFF/g,"").trim();
+  const start = safeStr(raw.start ?? raw["시작"] ?? raw["start"]).trim();
+  const end = safeStr(raw.end ?? raw["끝"] ?? raw["end"]).trim();
+  const address = safeStr(raw.address ?? raw["주소"] ?? raw["address"]).trim();
+  const lat = raw.lat ?? raw["위도"] ?? raw["lat"];
+  const lng = raw.lng ?? raw["경도"] ?? raw["lng"];
+  const capacity = raw.capacity ?? raw["용량"] ?? raw["수용 능력"] ?? raw["정원"] ?? raw["capacity"];
+  const current = raw.current ?? raw["현재"] ?? raw["current"];
+  const note = safeStr(raw.note ?? raw["메모"] ?? raw["note"]).trim();
+
+  return {
+    id: safeStr(raw.id || "").trim() || ("ev_" + Date.now()),
+    name: safeStr(raw.name || "").trim(),
+    area,
+    start: toISODate(start),
+    end: toISODate(end),
+    address,
+    lat: (lat==null || lat==="") ? null : Number(lat),
+    lng: (lng==null || lng==="") ? null : Number(lng),
+    capacity: num(capacity, 0),
+    current: num(current, 0),
+    note
+  };
+}
+function toISODate(v){
+  // 이미 YYYY-MM-DD면 그대로, "2026년 2월 26일" 같은 것도 최대한 변환
+  const s = safeStr(v).trim();
+  if(!s) return "";
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+  // 20260226 형태
+  if(/^\d{8}$/.test(s)) return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
+
+  // "2026년 2월 26일" 형태
+  const m = s.match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+  if(m){
+    const y = m[1];
+    const mm = String(m[2]).padStart(2,"0");
+    const dd = String(m[3]).padStart(2,"0");
+    return `${y}-${mm}-${dd}`;
+  }
+  // 변환 불가면 빈칸 처리(저장 단계에서 막힘)
+  return "";
+}
+function validateEvent(ev){
+  if(!ev.name) return "행사명(name)은 필수입니다.";
+  if(!ev.start || !/^\d{4}-\d{2}-\d{2}$/.test(ev.start)) return "시작일(start)을 YYYY-MM-DD로 입력해야 합니다.";
+  if(!ev.end || !/^\d{4}-\d{2}-\d{2}$/.test(ev.end)) return "종료일(end)을 YYYY-MM-DD로 입력해야 합니다.";
+  if(ev.capacity < 0) return "정원(capacity)은 0 이상이어야 합니다.";
+  if(ev.current < 0) return "현재(current)는 0 이상이어야 합니다.";
+  if(ev.lat !== null && !Number.isFinite(ev.lat)) return "위도(lat)가 숫자가 아닙니다.";
+  if(ev.lng !== null && !Number.isFinite(ev.lng)) return "경도(lng)가 숫자가 아닙니다.";
+  return "";
+}
+function sortEvents(list){
+  return list.slice().sort((a,b)=> (a.start||"").localeCompare(b.start||""));
+}
+
+async function loadEventsFromPages(){
+  const res = await fetch(`./events.json?ts=${Date.now()}`, {cache:"no-store"});
+  if(!res.ok) throw new Error(`events.json 로딩 실패 (${res.status})`);
+  const data = await res.json();
+  if(!Array.isArray(data)) throw new Error("events.json 형식 오류(배열이 아님)");
+  EVENTS = sortEvents(data.map(normalizeEvent).filter(e=>e.name));
+  selectedEventId = null;
+  renderEvents();
+}
+
+async function saveEventsToGitHub(){
+  showErr("eventsErr","");
+  // 저장 직전 다시 한 번 정규화/검증
+  const normalized = sortEvents(EVENTS.map(normalizeEvent));
+  for(const ev of normalized){
+    const err = validateEvent(ev);
+    if(err) throw new Error(`저장 불가: ${ev.name || ev.id}\n- ${err}`);
+  }
+  const text = JSON.stringify(normalized, null, 2);
+  await ghPutFile("events.json", text, "Update events.json via admin");
+  toast("✅ events.json 저장 완료");
+}
+
+/*** ====== geocode (주소->위경도) ====== ***/
+async function geocode(addr){
+  const q = addr.trim();
+  if(!q) return null;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
+  const res = await fetch(url, { headers: { "Accept":"application/json" }});
+  if(!res.ok) throw new Error(`지오코딩 실패 (${res.status})`);
+  const data = await res.json();
+  if(!data[0]) return null;
+  return { lat: Number(data[0].lat), lng: Number(data[0].lon) };
+}
+
+/*** ====== UI: events ====== ***/
+function fillEventForm(ev){
+  $("ev_name").value = ev.name || "";
+  $("ev_area").value = ev.area || "";
+  $("ev_start").value = ev.start || "";
+  $("ev_end").value = ev.end || "";
+  $("ev_address").value = ev.address || "";
+  $("ev_lat").value = (ev.lat==null) ? "" : String(ev.lat);
+  $("ev_lng").value = (ev.lng==null) ? "" : String(ev.lng);
+  $("ev_capacity").value = String(ev.capacity ?? 0);
+  $("ev_current").value = String(ev.current ?? 0);
+  $("ev_note").value = ev.note || "";
+  $("deleteBtn").disabled = false;
+}
+function resetEventForm(){
+  selectedEventId = null;
+  ["ev_name","ev_area","ev_start","ev_end","ev_address","ev_lat","ev_lng","ev_capacity","ev_current","ev_note"]
+    .forEach(id=>$(id).value="");
+  $("deleteBtn").disabled = true;
+  $("geoStatus").textContent = "위경도: -";
+  $("geoStatus").className = "pill";
+}
+function getEventForm(){
+  const latVal = $("ev_lat").value.trim();
+  const lngVal = $("ev_lng").value.trim();
+  return normalizeEvent({
+    id: selectedEventId || ("ev_" + Date.now()),
+    name: $("ev_name").value,
+    area: $("ev_area").value,
+    start: $("ev_start").value,
+    end: $("ev_end").value,
+    address: $("ev_address").value,
+    lat: latVal === "" ? null : Number(latVal),
+    lng: lngVal === "" ? null : Number(lngVal),
+    capacity: $("ev_capacity").value,
+    current: $("ev_current").value,
+    note: $("ev_note").value
+  });
+}
+function renderEvents(){
+  $("eventsCount").textContent = `${EVENTS.length}개`;
+  const wrap = $("eventsList");
+  wrap.innerHTML = "";
+  if(!EVENTS.length){
+    wrap.innerHTML = `<div class="muted">행사가 없습니다.</div>`;
+    return;
+  }
+  EVENTS.forEach(ev=>{
+    const cap = num(ev.capacity,0);
+    const cur = num(ev.current,0);
+    const full = (cap>0 && cur>=cap);
+    const div = document.createElement("div");
+    div.className = "item";
+    div.onclick = ()=>{
+      selectedEventId = ev.id;
+      fillEventForm(ev);
+      toast("행사 선택됨");
+    };
+    div.innerHTML = `
+      <div class="row">
+        <div>
+          <b>${escapeHtml(ev.name)}</b>
+          <span class="pill ${full ? "bad" : "ok"}">${full ? "마감" : "모집중"}</span>
+          <div class="tiny">${escapeHtml(ev.start)} ~ ${escapeHtml(ev.end)} · ${escapeHtml(ev.area || "")}</div>
+          <div class="tiny">${escapeHtml(ev.address || "")}</div>
+        </div>
+        <div class="tiny">${cur}/${cap || "-"}</div>
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+}
+
+/*** ====== applications / CSV ====== ***/
+function normalizeApp(a){
+  const obj = {
+    timestamp: safeStr(a.timestamp || a.time || ""),
+    eventId: safeStr(a.eventId || a.event_id || ""),
+    eventName: safeStr(a.eventName || a.event_name || ""),
+    brand: safeStr(a.brand || ""),
+    owner: safeStr(a.owner || ""),
+    phone: safeStr(a.phone || "").replace(/\D/g,""),
+    email: safeStr(a.email || ""),
+    category: safeStr(a.category || ""),
+    instagram: safeStr(a.instagram || a.insta || ""),
+    status: safeStr(a.status || "대기")
+  };
+  if(!STATUS_VALUES.includes(obj.status)) obj.status = "대기";
+  return obj;
+}
+function renderApps(){
+  $("appsCount").textContent = `${APPLICATIONS.length}건`;
+  const tb = $("appsTbody");
+  tb.innerHTML = "";
+  APPLICATIONS.forEach((a, idx)=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="right"><input type="checkbox" data-idx="${idx}"></td>
+      <td>
+        <div><b>${escapeHtml(a.eventName || a.eventId || "-")}</b></div>
+        <div class="tiny">${escapeHtml(a.timestamp || "")}</div>
+      </td>
+      <td>
+        <div><b>${escapeHtml(a.brand || "-")}</b></div>
+        <div class="tiny">${escapeHtml(a.owner || "")}</div>
+      </td>
+      <td>
+        <div class="mono">${escapeHtml(a.phone || "")}</div>
+        <div class="tiny">${escapeHtml(a.email || "")}</div>
+      </td>
+      <td>
+        <select data-status-idx="${idx}">
+          ${STATUS_VALUES.map(s=>`<option value="${s}" ${a.status===s?"selected":""}>${s}</option>`).join("")}
+        </select>
+      </td>
+      <td>
+        <button class="btn sub" type="button" data-kick="${idx}">강퇴</button>
+      </td>
+    `;
+    tb.appendChild(tr);
+  });
+
+  // status change
+  tb.querySelectorAll("select[data-status-idx]").forEach(sel=>{
+    sel.addEventListener("change", ()=>{
+      const i = Number(sel.getAttribute("data-status-idx"));
+      APPLICATIONS[i].status = sel.value;
+      toast("상태 변경됨");
+    });
+  });
+  // kick
+  tb.querySelectorAll("button[data-kick]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i = Number(btn.getAttribute("data-kick"));
+      const phone = (APPLICATIONS[i].phone || "").replace(/\D/g,"");
+      if(!phone){ toast("전화번호가 없어 강퇴/차단 불가"); return; }
+      APPLICATIONS[i].status = "강퇴";
+      if(!BLOCKLIST.includes(phone)) BLOCKLIST.push(phone);
+      renderApps();
+      renderBlock();
+      toast("강퇴 + 차단목록 추가됨");
+    });
   });
 }
 
-/* GitHub 저장 */
-async function saveGitHub(){
-  alert("※ GitHub API 연동은 다음 단계에서 연결됩니다.\n지금은 events.json을 직접 수정해 주세요.");
+function parseCsv(text){
+  // very simple CSV parser (no quoted commas support for MVP)
+  const lines = text.split(/\r?\n/).filter(l=>l.trim().length>0);
+  if(!lines.length) return [];
+  const header = lines[0].split(",").map(s=>s.trim());
+  const rows = [];
+  for(let i=1;i<lines.length;i++){
+    const cols = lines[i].split(",");
+    const obj = {};
+    header.forEach((h, idx)=> obj[h] = (cols[idx] ?? "").trim());
+    rows.push(obj);
+  }
+  return rows;
+}
+function appsToCsv(){
+  const header = ["timestamp","eventId","eventName","brand","owner","phone","email","category","instagram","status"];
+  const lines = [header.join(",")];
+  APPLICATIONS.forEach(a=>{
+    const row = header.map(k=> String(a[k]??"").replaceAll(","," ")); // comma-safe MVP
+    lines.push(row.join(","));
+  });
+  return lines.join("\n");
+}
+
+async function loadAppsFromGitHub(){
+  showErr("appsErr","");
+  try{
+    const file = await ghGetFile("applications.json");
+    const json = JSON.parse(decodeURIComponent(escape(atob(file.content))));
+    if(!Array.isArray(json)) throw new Error("applications.json이 배열이 아닙니다.");
+    APPLICATIONS = json.map(normalizeApp);
+    renderApps();
+    toast("applications.json 불러오기 완료");
+  }catch(e){
+    throw new Error(`불러오기 실패: ${e.message}`);
+  }
+}
+async function saveAppsToGitHub(){
+  showErr("appsErr","");
+  const text = JSON.stringify(APPLICATIONS.map(normalizeApp), null, 2);
+  await ghPutFile("applications.json", text, "Update applications.json via admin");
+  toast("✅ applications.json 저장 완료");
+}
+
+/*** ====== blocklist ====== ***/
+function renderBlock(){
+  $("blockCount").textContent = `${BLOCKLIST.length}개`;
+  const wrap = $("blockList");
+  wrap.innerHTML = "";
+  if(!BLOCKLIST.length){
+    wrap.innerHTML = `<div class="muted">차단된 번호가 없습니다.</div>`;
+    return;
+  }
+  BLOCKLIST.forEach(p=>{
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `<b class="mono">${escapeHtml(p)}</b> <span class="pill bad">차단</span>`;
+    wrap.appendChild(div);
+  });
+}
+async function loadBlockFromGitHub(){
+  showErr("blockErr","");
+  try{
+    const file = await ghGetFile("blocklist.json");
+    const json = JSON.parse(decodeURIComponent(escape(atob(file.content))));
+    if(!Array.isArray(json)) throw new Error("blocklist.json이 배열이 아닙니다.");
+    BLOCKLIST = json.map(x=>String(x).replace(/\D/g,"")).filter(Boolean);
+    renderBlock();
+    toast("blocklist.json 불러오기 완료");
+  }catch(e){
+    throw new Error(`불러오기 실패: ${e.message}`);
+  }
+}
+async function saveBlockToGitHub(){
+  showErr("blockErr","");
+  const text = JSON.stringify(BLOCKLIST, null, 2);
+  await ghPutFile("blocklist.json", text, "Update blocklist.json via admin");
+  toast("✅ blocklist.json 저장 완료");
+}
+
+/*** ====== 로그인/부트 ====== ***/
+function setAuthed(val){
+  localStorage.setItem(LS_AUTH, val ? "1" : "0");
+}
+function isAuthed(){
+  return localStorage.getItem(LS_AUTH) === "1";
+}
+function showAuthedUI(){
+  $("loginCard").style.display = "none";
+  $("settingsCard").style.display = "block";
+  $("eventsCard").style.display = "block";
+  $("appsCard").style.display = "block";
+  $("blockCard").style.display = "block";
+}
+function showLoginUI(){
+  $("loginCard").style.display = "block";
+  $("settingsCard").style.display = "none";
+  $("eventsCard").style.display = "none";
+  $("appsCard").style.display = "none";
+  $("blockCard").style.display = "none";
+}
+
+/*** ====== 이벤트 핸들러 ====== ***/
+$("loginBtn").addEventListener("click", ()=>{
+  const id = $("loginId").value.trim();
+  const pw = $("loginPw").value;
+  if(!ADMIN_IDS.includes(id)){
+    $("loginHint").style.display = "block";
+    $("loginHint").textContent = "ID가 staff1/staff2/staff3 중 하나인지 확인하세요.";
+    return;
+  }
+  if(pw !== ADMIN_PASSWORD){
+    $("loginHint").style.display = "block";
+    $("loginHint").textContent = "비밀번호가 틀렸습니다.";
+    return;
+  }
+  $("loginHint").style.display = "none";
+  setAuthed(true);
+  showAuthedUI();
+  refreshTokenStatus();
+  loadEventsFromPages().catch(e=>showErr("eventsErr", e.message));
+  renderApps();
+  renderBlock();
+  toast("로그인 성공");
+});
+
+$("saveTokenBtn").addEventListener("click", ()=>{
+  const s = {
+    owner: $("ghOwner").value.trim(),
+    repo: $("ghRepo").value.trim(),
+    branch: $("ghBranch").value.trim(),
+    token: $("ghToken").value.trim()
+  };
+  saveGh(s);
+  toast("토큰 저장됨");
+});
+$("clearTokenBtn").addEventListener("click", ()=>{
+  localStorage.removeItem(LS_GH);
+  refreshTokenStatus();
+  toast("토큰 삭제됨");
+});
+
+$("reloadEventsBtn").addEventListener("click", ()=>{
+  loadEventsFromPages().then(()=>toast("events.json 다시 불러옴")).catch(e=>showErr("eventsErr", e.message));
+});
+
+$("geocodeBtn").addEventListener("click", async ()=>{
+  showErr("eventsErr","");
+  $("geoStatus").textContent = "위경도: 찾는 중…";
+  $("geoStatus").className = "pill";
+  try{
+    const addr = $("ev_address").value.trim();
+    const r = await geocode(addr);
+    if(!r){ $("geoStatus").textContent = "위경도: 실패(주소 확인)"; $("geoStatus").className="pill bad"; return; }
+    $("ev_lat").value = String(r.lat);
+    $("ev_lng").value = String(r.lng);
+    $("geoStatus").textContent = `위경도: OK (${r.lat.toFixed(5)}, ${r.lng.toFixed(5)})`;
+    $("geoStatus").className = "pill ok";
+    toast("위경도 생성 완료");
+  }catch(e){
+    $("geoStatus").textContent = "위경도: 실패";
+    $("geoStatus").className="pill bad";
+    showErr("eventsErr", e.message);
+  }
+});
+
+$("addUpdateBtn").addEventListener("click", ()=>{
+  showErr("eventsErr","");
+  try{
+    const ev = getEventForm();
+    const err = validateEvent(ev);
+    if(err) throw new Error(err);
+
+    const idx = EVENTS.findIndex(x=>x.id === ev.id);
+    if(idx >= 0) EVENTS[idx] = ev;
+    else EVENTS.push(ev);
+
+    EVENTS = sortEvents(EVENTS.map(normalizeEvent));
+    selectedEventId = ev.id;
+    renderEvents();
+    toast(idx>=0 ? "행사 수정됨(로컬)" : "행사 추가됨(로컬)");
+  }catch(e){
+    showErr("eventsErr", `저장 실패: ${e.message}`);
+  }
+});
+
+$("resetFormBtn").addEventListener("click", ()=> resetEventForm());
+
+$("deleteBtn").addEventListener("click", ()=>{
+  if(!selectedEventId){ toast("삭제할 행사를 먼저 선택"); return; }
+  const ev = EVENTS.find(x=>x.id===selectedEventId);
+  if(!confirm(`삭제할까요?\n- ${ev?.name || selectedEventId}`)) return;
+  EVENTS = EVENTS.filter(x=>x.id!==selectedEventId);
+  resetEventForm();
+  renderEvents();
+  toast("행사 삭제됨(로컬)");
+});
+
+$("saveEventsToGitBtn").addEventListener("click", async ()=>{
+  try{
+    await saveEventsToGitHub();
+  }catch(e){
+    showErr("eventsErr", e.message);
+  }
+});
+
+/*** ====== applications handlers ====== ***/
+$("appsCsvFile").addEventListener("change", async (e)=>{
+  showErr("appsErr","");
+  const file = e.target.files?.[0];
+  if(!file) return;
+  const text = await file.text();
+  const rows = parseCsv(text);
+  APPLICATIONS = rows.map(normalizeApp);
+  renderApps();
+  toast("CSV 불러오기 완료");
+});
+
+$("applyBulkBtn").addEventListener("click", ()=>{
+  const st = $("bulkStatus").value;
+  if(!STATUS_VALUES.includes(st)){ toast("일괄 적용할 상태를 선택"); return; }
+  const checks = Array.from($("appsTbody").querySelectorAll('input[type="checkbox"][data-idx]'));
+  const picked = checks.filter(c=>c.checked).map(c=>Number(c.getAttribute("data-idx")));
+  if(!picked.length){ toast("선택된 행이 없음"); return; }
+  picked.forEach(i=> APPLICATIONS[i].status = st);
+  renderApps();
+  toast(`선택행 상태를 '${st}'로 변경`);
+});
+
+$("loadAppsFromGitBtn").addEventListener("click", async ()=>{
+  try{
+    await loadAppsFromGitHub();
+  }catch(e){
+    showErr("appsErr", e.message);
+  }
+});
+$("saveAppsToGitBtn").addEventListener("click", async ()=>{
+  try{
+    await saveAppsToGitHub();
+  }catch(e){
+    showErr("appsErr", e.message);
+  }
+});
+$("exportCsvBtn").addEventListener("click", ()=>{
+  const csv = appsToCsv();
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `applications_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast("CSV 다운로드 완료");
+});
+
+/*** ====== block handlers ====== ***/
+$("addBlockBtn").addEventListener("click", ()=>{
+  const p = $("blockPhone").value.replace(/\D/g,"");
+  if(!p){ toast("전화번호 입력"); return; }
+  if(!BLOCKLIST.includes(p)) BLOCKLIST.push(p);
+  $("blockPhone").value = "";
+  renderBlock();
+  toast("차단 추가됨");
+});
+$("clearBlockBtn").addEventListener("click", ()=>{
+  if(!confirm("차단목록을 전체 삭제할까요?")) return;
+  BLOCKLIST = [];
+  renderBlock();
+  toast("전체 삭제됨");
+});
+$("loadBlockFromGitBtn").addEventListener("click", async ()=>{
+  try{
+    await loadBlockFromGitHub();
+  }catch(e){
+    showErr("blockErr", e.message);
+  }
+});
+$("saveBlockToGitBtn").addEventListener("click", async ()=>{
+  try{
+    await saveBlockToGitHub();
+  }catch(e){
+    showErr("blockErr", e.message);
+  }
+});
+
+/*** ====== boot ====== ***/
+refreshTokenStatus();
+if(isAuthed()){
+  showAuthedUI();
+  loadEventsFromPages().catch(e=>showErr("eventsErr", e.message));
+  renderApps();
+  renderBlock();
+}else{
+  showLoginUI();
 }
 </script>
-
 </body>
 </html>
