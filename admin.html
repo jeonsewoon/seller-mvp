@@ -3,86 +3,131 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0b0b0c">
+  <meta name="theme-color" content="#f6f7fb">
   <title>뜻밖의시장 | 관리자</title>
 
   <style>
     :root{
-      --bg:#0b0b0c; --card:#16161a; --soft:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.12); --muted:#b2b2b8;
-      --ok:rgba(170,255,205,.95); --bad:rgba(255,180,180,.95);
-      --warn:#ffcc66;
+      /* Light, readability-first */
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --soft:#f2f4f8;
+      --line:rgba(17,24,39,.12);
+      --text:#111827;
+      --muted:rgba(17,24,39,.68);
+      --brand:#0ea5e9; /* cool blue */
+      --ok:#16a34a;
+      --bad:#ef4444;
+      --shadow:0 14px 40px rgba(17,24,39,.08);
+      --radius:16px;
     }
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:#f4f4f6}
-    .wrap{max-width:1100px;margin:0 auto;padding:20px 16px 92px}
-    h1{font-size:24px;margin:0 0 6px}
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      font-size:16px;
+    }
+    .wrap{max-width:1120px;margin:0 auto;padding:22px 16px 120px}
+    h1{font-size:26px;margin:0 0 6px;letter-spacing:-0.02em}
     h2{font-size:16px;margin:0 0 10px}
-    .muted{color:var(--muted);font-size:13px;line-height:1.5}
-    .card{margin-top:14px;padding:16px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+    .muted{color:var(--muted);font-size:14px;line-height:1.6}
+    .card{
+      margin-top:14px;padding:16px;border-radius:var(--radius);
+      background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)
+    }
     .hr{height:1px;background:var(--line);margin:14px 0}
     .grid{display:grid;grid-template-columns:1fr;gap:10px}
-    @media(min-width:860px){ .grid{grid-template-columns:1fr 1fr 1fr} }
+    @media(min-width:920px){ .grid{grid-template-columns:1fr 1fr 1fr} }
 
-    label{display:block;font-size:12px;color:#d0d0d6;margin:10px 0 6px}
+    label{display:block;font-size:12px;color:rgba(17,24,39,.75);margin:10px 0 6px}
     input,select,textarea{
       width:100%;
-      padding:11px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.25);
-      color:#fff;
-      font-size:14px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(17,24,39,.14);
+      background:#fff;
+      color:var(--text);
+      font-size:15px;
       outline:none;
     }
-    input::placeholder{color:rgba(255,255,255,.35)}
-    textarea{min-height:86px;resize:vertical}
-
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .btn{border:0;padding:12px 14px;border-radius:14px;background:#fff;color:#000;font-weight:900;cursor:pointer}
-    .btn.sub{background:rgba(255,255,255,.10);color:#fff;font-weight:800;border:1px solid rgba(255,255,255,.16)}
-    .btn.danger{background:rgba(255,120,120,.10);color:#ffdede;border:1px solid rgba(255,120,120,.25)}
-    .btn.warn{background:rgba(255,204,102,.12);color:#ffe9b5;border:1px solid rgba(255,204,102,.35)}
-
-    .pill{display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.16);color:#cfcfd3;background:rgba(255,255,255,.05)}
-    .pill.ok{border-color:rgba(120,255,180,.22);color:var(--ok);background:rgba(120,255,180,.06)}
-    .pill.bad{border-color:rgba(255,120,120,.22);color:var(--bad);background:rgba(255,120,120,.06)}
-    .pill.warn{border-color:rgba(255,204,102,.35);color:var(--warn);background:rgba(255,204,102,.10)}
-
-    .list{display:flex;flex-direction:column;gap:8px}
-    .item{
-      padding:12px;border-radius:14px;background:var(--soft);border:1px solid var(--line);
-      cursor:pointer
+    textarea{min-height:90px;resize:vertical}
+    input::placeholder{color:rgba(17,24,39,.35)}
+    input:focus,select:focus,textarea:focus{
+      border-color:rgba(14,165,233,.55);
+      box-shadow:0 0 0 4px rgba(14,165,233,.12);
     }
-    .item b{font-size:15px}
-    .row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .tiny{font-size:12px;color:var(--muted)}
+
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+    .btn{
+      border:0;
+      padding:14px 18px;
+      border-radius:16px;
+      font-size:16px;
+      min-height:48px;
+      font-weight:900;
+      cursor:pointer;
+      background:#111827;
+      color:#fff;
+    }
+    .btn.sub{
+      background:#fff;color:#111827;
+      border:1px solid rgba(17,24,39,.18);
+      font-weight:900;
+    }
+    .btn.brand{
+      background:var(--brand);
+      color:#fff;
+    }
+    .btn.danger{
+      background:rgba(239,68,68,.10);
+      color:#991b1b;
+      border:1px solid rgba(239,68,68,.28);
+      font-weight:900;
+    }
+    .btn:disabled{
+      opacity:.45; cursor:not-allowed;
+    }
+
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      font-size:12px;padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(17,24,39,.16);
+      color:rgba(17,24,39,.78);
+      background:rgba(17,24,39,.04);
+      white-space:nowrap;
+    }
+    .pill.ok{border-color:rgba(22,163,74,.25);color:#166534;background:rgba(22,163,74,.08)}
+    .pill.bad{border-color:rgba(239,68,68,.25);color:#991b1b;background:rgba(239,68,68,.08)}
+
+    .list{display:flex;flex-direction:column;gap:10px}
+    .item{
+      padding:14px;border-radius:16px;
+      background:var(--soft);
+      border:1px solid rgba(17,24,39,.12);
+      cursor:pointer;
+    }
+    .item:hover{border-color:rgba(14,165,233,.35)}
+    .row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .tiny{font-size:12px;color:var(--muted);line-height:1.5}
+    .item b{font-size:16px}
 
     .toast{
       position:fixed;left:50%;transform:translateX(-50%);
-      bottom:16px;z-index:50;background:rgba(0,0,0,.82);
-      border:1px solid rgba(255,255,255,.18);padding:10px 12px;border-radius:999px;
-      font-size:13px;display:none;max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+      bottom:16px;z-index:50;
+      background:#111827;color:#fff;
+      padding:10px 14px;border-radius:999px;
+      font-size:13px;display:none;max-width:92vw;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      box-shadow:0 14px 40px rgba(17,24,39,.22);
     }
     .err{
-      margin-top:10px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,120,120,.22);
-      background:rgba(255,120,120,.06);color:#ffdede;font-size:13px;line-height:1.5;white-space:pre-wrap
-    }
-    .okbox{
-      margin-top:10px;padding:12px 14px;border-radius:14px;border:1px solid rgba(120,255,180,.22);
-      background:rgba(120,255,180,.06);color:rgba(210,255,230,.95);font-size:13px;line-height:1.5;white-space:pre-wrap;display:none
-    }
-    .hint{
-      margin-top:8px;font-size:12px;color:rgba(255,255,255,.75);
-      padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.04);
-    }
-    .req{color:#ff6b6b;font-weight:900;margin-left:6px}
-    .bigField label{font-size:13px}
-    .bigField input{
-      font-size:16px;
-      padding:14px 14px;
-      border-radius:14px;
-      border-color:rgba(255,255,255,.20);
+      margin-top:10px;padding:12px 14px;border-radius:16px;
+      border:1px solid rgba(239,68,68,.25);
+      background:rgba(239,68,68,.08);
+      color:#991b1b;font-size:13px;line-height:1.6;white-space:pre-wrap
     }
   </style>
 </head>
@@ -90,24 +135,22 @@
 <body>
 <div class="wrap">
   <h1>뜻밖의시장 관리자</h1>
-  <div class="muted">
-    events.json을 <b>안전한 포맷(영문 키)</b>으로만 저장합니다.
-    <br>※ 빈 행사/undefined 생성 방지, 정원(capacity) <b>1 이상 필수</b>
-  </div>
+  <div class="muted">가독성 최우선 버전 · events.json을 <b>안전한 포맷(영문 키)</b>으로만 저장합니다. (빈 행사/undefined 저장 방지)</div>
 
-  <div class="card">
+  <div class="card" id="settingsCard">
     <h2>GitHub 저장 설정</h2>
-    <div class="muted">events.json 저장에만 사용합니다. 토큰은 이 브라우저(LocalStorage)에만 저장됩니다.</div>
+    <div class="muted">events.json 저장에만 사용합니다. 토큰은 <b>이 브라우저(LocalStorage)</b>에만 저장됩니다.</div>
     <div class="hr"></div>
 
     <div class="grid">
       <div><label>Repo Owner</label><input id="ghOwner" value="jeonsewoon"></div>
       <div><label>Repo Name</label><input id="ghRepo" value="seller-mvp"></div>
       <div><label>Branch</label><input id="ghBranch" value="main"></div>
+
       <div style="grid-column:1/-1">
         <label>GitHub Token (Fine-grained / Contents: Read & write)</label>
-        <input id="ghToken" placeholder="github_pat_...">
-        <div class="hint">⚠️ 토큰은 절대 코드에 넣지 말고, 여기에만 붙여넣으세요. (저장하면 이 브라우저에만 남아요)</div>
+        <input id="ghToken" placeholder="github_pat_... (여기에만 붙여넣기)">
+        <div class="tiny">⚠️ 토큰은 코드에 넣지 마세요. (여기 입력 → “토큰 저장”)</div>
       </div>
     </div>
 
@@ -120,38 +163,34 @@
 
   <div class="card">
     <h2>행사 추가 / 수정</h2>
-    <div class="muted">행사명 · 시작일 · 종료일 · 정원(capacity)은 필수입니다.</div>
+    <div class="muted"><b>필수:</b> 행사명 · 시작 · 종료 · 정원(capacity, 1 이상). 저장이 되면 아래 “GitHub에 저장(events.json)”을 눌러야 메인에 반영됩니다.</div>
     <div class="hr"></div>
 
     <div class="grid">
       <div>
-        <label>행사명 <span class="req">*</span></label>
+        <label>행사명 *</label>
         <input id="ev_name" placeholder="예) 동탄역파라곤">
       </div>
-
       <div>
         <label>지역(area)</label>
         <input id="ev_area" placeholder="예) 동탄">
       </div>
-
-      <!-- ✅ 정원 UX 강화 (항상 보이고, 기본값 1) -->
-      <div class="bigField">
-        <label>정원(capacity) <span class="req">*</span> <span class="pill warn">1 이상 필수</span></label>
-        <input id="ev_capacity" type="number" min="1" step="1" value="1" inputmode="numeric" placeholder="예) 30">
-        <div class="tiny">정원은 1 이상이어야 합니다. (0 입력 시 저장 불가)</div>
+      <div>
+        <label>정원(capacity) * (1 이상)</label>
+        <input id="ev_capacity" type="number" min="1" placeholder="예) 30">
       </div>
 
       <div>
-        <label>시작(start) <span class="req">*</span></label>
+        <label>시작(start) *</label>
         <input id="ev_start" type="date">
       </div>
       <div>
-        <label>종료(end) <span class="req">*</span></label>
+        <label>종료(end) *</label>
         <input id="ev_end" type="date">
       </div>
       <div>
         <label>현재(current)</label>
-        <input id="ev_current" type="number" min="0" step="1" value="0" inputmode="numeric" placeholder="예) 0">
+        <input id="ev_current" type="number" min="0" placeholder="예) 0">
       </div>
 
       <div style="grid-column:1/-1">
@@ -166,25 +205,24 @@
     </div>
 
     <div class="btnRow">
-      <button class="btn" id="addUpdateBtn" type="button">행사 추가/수정 (로컬)</button>
+      <button class="btn brand" id="addUpdateBtn" type="button">행사 추가/수정 (로컬)</button>
       <button class="btn sub" id="resetFormBtn" type="button">입력 초기화</button>
       <button class="btn danger" id="deleteBtn" type="button" disabled>행사 취소(삭제)</button>
     </div>
 
     <div id="eventsErr" class="err" style="display:none"></div>
-    <div id="eventsOk" class="okbox"></div>
 
     <div class="hr"></div>
+
     <div class="btnRow">
       <button class="btn sub" id="reloadEventsBtn" type="button">events.json 다시 불러오기</button>
       <button class="btn" id="saveEventsToGitBtn" type="button">GitHub에 저장(events.json)</button>
-      <button class="btn warn" id="saveWithRetryBtn" type="button" style="display:none">409 해결(자동 재시도)</button>
       <span class="pill" id="eventsCount">0개</span>
     </div>
 
     <div class="hr"></div>
     <h2>행사 목록</h2>
-    <div class="muted">아래 목록에서 행사를 클릭하면 수정/삭제 대상으로 선택됩니다.</div>
+    <div class="muted">아래에서 행사를 클릭하면 수정/삭제 대상으로 선택됩니다.</div>
     <div class="hr"></div>
     <div class="list" id="eventsList"></div>
   </div>
@@ -193,39 +231,28 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const LS_GH = "um_gh_settings_v2"; // v2
+  const LS_GH = "um_gh_settings_v2"; // v2 (새 UI)
   let EVENTS = [];
   let selectedEventId = null;
-  let lastPutConflict = false;
 
   const $ = (id)=>document.getElementById(id);
   const toastEl = $("toast");
+
   function toast(msg){
     toastEl.textContent = msg;
     toastEl.style.display = "block";
     clearTimeout(window.__t);
-    window.__t = setTimeout(()=> toastEl.style.display="none", 1800);
+    window.__t = setTimeout(()=> toastEl.style.display="none", 2000);
   }
   function showErr(msg){
-    $("eventsErr").style.display = msg ? "block" : "none";
-    $("eventsErr").textContent = msg || "";
-    if(msg) $("eventsOk").style.display = "none";
+    const el = $("eventsErr");
+    el.style.display = msg ? "block" : "none";
+    el.textContent = msg || "";
   }
-  function showOk(msg){
-    $("eventsOk").style.display = "block";
-    $("eventsOk").textContent = msg || "";
-  }
-
   function safeStr(v){ return (v==null) ? "" : String(v); }
-  function num(v, d=0){
-    const n = Number(v);
-    return Number.isFinite(n) ? n : d;
-  }
+  function num(v, d=0){ const n = Number(v); return Number.isFinite(n) ? n : d; }
   function escapeHtml(s){
     return String(s ?? "").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
-  }
-  function stripZWSP(s){
-    return String(s ?? "").replace(/\u200B|\u200C|\u200D|\uFEFF/g,"").trim();
   }
 
   function loadGh(){ try { return JSON.parse(localStorage.getItem(LS_GH)) || {}; } catch { return {}; } }
@@ -236,7 +263,7 @@
       owner: s.owner || $("ghOwner").value.trim(),
       repo: s.repo || $("ghRepo").value.trim(),
       branch: s.branch || $("ghBranch").value.trim(),
-      token: s.token || $("ghToken").value.trim(),
+      token: s.token || $("ghToken").value.trim()
     };
   }
   function refreshTokenStatus(){
@@ -244,7 +271,6 @@
     const ok = !!(s.token && s.owner && s.repo && s.branch);
     $("tokenStatus").textContent = ok ? "토큰: 저장됨" : "토큰: 없음";
     $("tokenStatus").className = ok ? "pill ok" : "pill";
-
     if(s.owner) $("ghOwner").value = s.owner;
     if(s.repo) $("ghRepo").value = s.repo;
     if(s.branch) $("ghBranch").value = s.branch;
@@ -258,26 +284,17 @@
     if(!res.ok) throw new Error(`GitHub GET 실패: ${path} (${res.status})`);
     return await res.json();
   }
-
   async function ghPutFile(path, contentText, message){
     const {owner,repo,branch,token} = getGh();
     if(!token) throw new Error("토큰이 없습니다. 상단에서 토큰 저장 후 다시 시도하세요.");
 
     let sha = null;
-    try {
-      const cur = await ghGetFile(path);
-      sha = cur.sha;
-    } catch(e){
-      // 404면 새 파일 생성
+    try { sha = (await ghGetFile(path)).sha; } catch(e){
       if(!String(e.message).includes("(404)")) throw e;
     }
 
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-    const body = {
-      message,
-      content: btoa(unescape(encodeURIComponent(contentText))),
-      branch
-    };
+    const body = { message, content: btoa(unescape(encodeURIComponent(contentText))), branch };
     if(sha) body.sha = sha;
 
     const res = await fetch(url, {
@@ -289,8 +306,8 @@
       body: JSON.stringify(body)
     });
 
-    if(res.status === 401) throw new Error("401 Bad credentials (토큰 권한/만료). Fine-grained 토큰 Contents(Read&Write) + repo(seller-mvp) 확인.");
-    if(res.status === 409) throw new Error("409 Conflict (파일 sha 불일치). 최신 events.json과 충돌. (자동 재시도 가능)");
+    if(res.status === 401) throw new Error("401 Bad credentials: 토큰 권한/만료 확인 (Fine-grained, Contents Read&Write, repo seller-mvp).");
+    if(res.status === 409) throw new Error("409 Conflict: 파일 sha 불일치. 'events.json 다시 불러오기' 후 다시 저장하세요.");
     if(!res.ok) throw new Error(`GitHub PUT 실패: ${path} (${res.status})`);
     return await res.json();
   }
@@ -309,34 +326,19 @@
   }
 
   function normalizeEvent(raw){
-    // 한글 키/옛 키 섞여도 안전하게 영문화
-    const area = stripZWSP(raw.area ?? raw["지역"]);
-    const name = stripZWSP(raw.name ?? raw["행사명"] ?? raw["name"]);
-    const start = toISODate(raw.start ?? raw["시작"] ?? raw["start"]);
-    const end = toISODate(raw.end ?? raw["끝"] ?? raw["end"]);
-    const address = stripZWSP(raw.address ?? raw["주소"] ?? raw["address"]);
-    const note = stripZWSP(raw.note ?? raw["메모"] ?? raw["note"]);
-
-    // capacity/current 다양한 한글 키 흡수
-    const capacityRaw = raw.capacity ?? raw["정원"] ?? raw["용량"] ?? raw["수용 능력"];
-    const currentRaw = raw.current ?? raw["현재"];
-
-    // ✅ 정원은 최소 1로 강제 (빈/0 방지)
-    const capacity = Math.max(1, num(capacityRaw, 1));
-    const current = Math.max(0, num(currentRaw, 0));
-
+    const area = safeStr(raw.area ?? raw["지역"]).replace(/\u200B|\u200C|\u200D|\uFEFF/g,"").trim();
     return {
-      id: stripZWSP(raw.id) || ("ev_" + Date.now()),
-      name,
+      id: safeStr(raw.id || "").trim() || ("ev_" + Date.now()),
+      name: safeStr(raw.name ?? raw["행사명"] ?? raw["name"]).trim(),
       area,
-      start,
-      end,
-      address,
+      start: toISODate(raw.start ?? raw["시작"] ?? raw["start"]),
+      end: toISODate(raw.end ?? raw["끝"] ?? raw["end"]),
+      address: safeStr(raw.address ?? raw["주소"] ?? raw["address"]).trim(),
       lat: null,
       lng: null,
-      capacity,
-      current,
-      note
+      capacity: num(raw.capacity ?? raw["정원"] ?? raw["용량"] ?? raw["수용 능력"], 0),
+      current: num(raw.current ?? raw["현재"], 0),
+      note: safeStr(raw.note ?? raw["메모"] ?? raw["note"]).trim()
     };
   }
 
@@ -348,24 +350,16 @@
     if(!/^\d{4}-\d{2}-\d{2}$/.test(ev.end)) return "종료일은 YYYY-MM-DD 형식이어야 합니다.";
     if(ev.capacity < 1) return "정원(capacity)은 1 이상이어야 합니다.";
     if(ev.current < 0) return "현재(current)는 0 이상이어야 합니다.";
+    if(ev.current > ev.capacity) return "현재(current)가 정원(capacity)보다 클 수 없습니다.";
     return "";
   }
 
   function cleanEvents(list){
-    // ✅ undefined/빈 행사 제거 + 표준화 + 정렬
-    const cleaned = (list || [])
+    const cleaned = list
       .map(normalizeEvent)
       .filter(ev => ev.name && ev.start && ev.end && ev.capacity >= 1);
-
-    // id 중복 제거(최신 우선)
-    const map = new Map();
-    for(const ev of cleaned){
-      map.set(ev.id, ev);
-    }
-    const uniq = Array.from(map.values());
-
-    uniq.sort((a,b)=> (a.start||"").localeCompare(b.start||""));
-    return uniq;
+    cleaned.sort((a,b)=> (a.start||"").localeCompare(b.start||""));
+    return cleaned;
   }
 
   function fillEventForm(ev){
@@ -374,22 +368,16 @@
     $("ev_start").value = ev.start || "";
     $("ev_end").value = ev.end || "";
     $("ev_address").value = ev.address || "";
-    $("ev_capacity").value = String(Math.max(1, num(ev.capacity, 1)));
-    $("ev_current").value = String(Math.max(0, num(ev.current, 0)));
+    $("ev_capacity").value = String(ev.capacity ?? 1);
+    $("ev_current").value = String(ev.current ?? 0);
     $("ev_note").value = ev.note || "";
     $("deleteBtn").disabled = false;
   }
 
   function resetEventForm(){
     selectedEventId = null;
-    $("ev_name").value = "";
-    $("ev_area").value = "";
-    $("ev_start").value = "";
-    $("ev_end").value = "";
-    $("ev_address").value = "";
-    $("ev_capacity").value = "1";   // ✅ 기본값
-    $("ev_current").value = "0";
-    $("ev_note").value = "";
+    ["ev_name","ev_area","ev_start","ev_end","ev_address","ev_capacity","ev_current","ev_note"]
+      .forEach(id=>$(id).value="");
     $("deleteBtn").disabled = true;
   }
 
@@ -411,17 +399,14 @@
     $("eventsCount").textContent = `${EVENTS.length}개`;
     const wrap = $("eventsList");
     wrap.innerHTML = "";
-
     if(!EVENTS.length){
-      wrap.innerHTML = `<div class="muted">행사가 없습니다. (admin에서 추가 후 GitHub 저장하세요)</div>`;
+      wrap.innerHTML = `<div class="muted">행사가 없습니다.</div>`;
       return;
     }
-
     EVENTS.forEach(ev=>{
       const cap = num(ev.capacity,1);
       const cur = num(ev.current,0);
       const full = (cap>0 && cur>=cap);
-
       const div = document.createElement("div");
       div.className = "item";
       div.onclick = ()=>{
@@ -429,7 +414,6 @@
         fillEventForm(ev);
         toast("행사 선택됨");
       };
-
       div.innerHTML = `
         <div class="row">
           <div>
@@ -447,15 +431,10 @@
 
   async function loadEvents(){
     showErr("");
-    $("saveWithRetryBtn").style.display = "none";
-    lastPutConflict = false;
-
     const res = await fetch(`./events.json?ts=${Date.now()}`, {cache:"no-store"});
     if(!res.ok) throw new Error(`events.json 로딩 실패 (${res.status})`);
-
     const data = await res.json();
     if(!Array.isArray(data)) throw new Error("events.json 형식 오류(배열 아님)");
-
     EVENTS = cleanEvents(data);
     resetEventForm();
     renderEvents();
@@ -463,46 +442,17 @@
 
   async function saveEventsToGitHub(){
     showErr("");
-    $("saveWithRetryBtn").style.display = "none";
-    lastPutConflict = false;
-
     EVENTS = cleanEvents(EVENTS);
-
     for(const ev of EVENTS){
       const err = validateEvent(ev);
       if(err) throw new Error(`저장 불가: ${ev.name}\n- ${err}`);
     }
-
     const text = JSON.stringify(EVENTS, null, 2);
-
-    try{
-      await ghPutFile("events.json", text, "Update events.json via admin");
-      toast("✅ events.json 저장 완료");
-      showOk("저장 성공 ✅\n메인(index) 화면을 새로고침하면 반영됩니다.");
-    }catch(e){
-      if(String(e.message).includes("409 Conflict")){
-        lastPutConflict = true;
-        $("saveWithRetryBtn").style.display = "inline-block";
-      }
-      throw e;
-    }
+    await ghPutFile("events.json", text, "Update events.json via admin");
+    toast("✅ events.json 저장 완료 (메인 새로고침)");
   }
 
-  // ✅ 409 자동 해결: 최신 events.json 다시 불러오고 저장 재시도
-  async function saveWithRetry(){
-    showErr("");
-    showOk("");
-    try{
-      await loadEvents();                 // 최신 가져오기
-      // 로컬 폼에 입력해둔 내용이 있으면 그것도 보존해야 하는데,
-      // 초보 안전성 때문에: 충돌 시에는 "최신 파일 기준으로 저장"만 보장
-      await saveEventsToGitHub();
-    }catch(e){
-      showErr(`재시도 실패: ${e.message}`);
-    }
-  }
-
-  // 토큰 버튼
+  // Token buttons
   $("saveTokenBtn").addEventListener("click", ()=>{
     const s = {
       owner: $("ghOwner").value.trim(),
@@ -519,10 +469,9 @@
     toast("토큰 삭제됨");
   });
 
-  // 행사 추가/수정
+  // Add/Update
   $("addUpdateBtn").addEventListener("click", ()=>{
     showErr("");
-    $("eventsOk").style.display = "none";
     try{
       const ev = getEventForm();
       const err = validateEvent(ev);
@@ -534,19 +483,16 @@
 
       EVENTS = cleanEvents(EVENTS);
       selectedEventId = ev.id;
-
       renderEvents();
       toast(idx>=0 ? "행사 수정됨(로컬)" : "행사 추가됨(로컬)");
-      showOk("로컬 반영 완료.\n이제 'GitHub에 저장(events.json)' 버튼을 눌러야 메인 화면에 반영됩니다.");
     }catch(e){
       showErr(`저장 실패: ${e.message}`);
     }
   });
 
-  // 입력 초기화
   $("resetFormBtn").addEventListener("click", ()=> resetEventForm());
 
-  // 행사 취소(삭제)
+  // Delete
   $("deleteBtn").addEventListener("click", ()=>{
     if(!selectedEventId){ toast("삭제할 행사를 먼저 선택"); return; }
     const ev = EVENTS.find(x=>x.id===selectedEventId);
@@ -557,27 +503,18 @@
     resetEventForm();
     renderEvents();
     toast("행사 취소(삭제) 완료 (로컬)");
-    showOk("로컬에서 삭제됨.\n메인 반영하려면 'GitHub에 저장(events.json)'을 눌러주세요.");
   });
 
-  // 다시 불러오기
   $("reloadEventsBtn").addEventListener("click", ()=>{
-    loadEvents()
-      .then(()=>{ toast("events.json 다시 불러옴"); showOk("events.json 최신 상태를 불러왔습니다."); })
-      .catch(e=>showErr(e.message));
+    loadEvents().then(()=>toast("events.json 다시 불러옴")).catch(e=>showErr(e.message));
   });
 
-  // GitHub 저장
   $("saveEventsToGitBtn").addEventListener("click", ()=>{
     saveEventsToGitHub().catch(e=>showErr(e.message));
   });
 
-  // 409 재시도
-  $("saveWithRetryBtn").addEventListener("click", ()=> saveWithRetry());
-
   // boot
   refreshTokenStatus();
-  resetEventForm();
   loadEvents().catch(e=>showErr(e.message));
 </script>
 </body>
