@@ -12,49 +12,292 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    :root{--bg:#0b0b0c;--card:#16161a;--soft:rgba(255,255,255,.06);--line:rgba(255,255,255,.12);--muted:#b2b2b8;}
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:#f4f4f6}
-    .wrap{max-width:860px;margin:0 auto;padding:22px 16px 92px}
-    .heroTitle{font-size:36px;font-weight:900;letter-spacing:-0.02em;color:#fff;margin:6px 0 8px}
-    .heroSub{color:var(--muted);font-size:14px;margin:0 0 14px;line-height:1.5}
-    .card{margin-top:14px;padding:16px;border-radius:18px;background:var(--card);border:1px solid var(--line)}
-    h2{font-size:16px;margin:0 0 10px}
-    .muted{color:var(--muted);font-size:13px;line-height:1.55}
-    .hr{height:1px;background:var(--line);margin:14px 0}
-    #map{height:360px;margin-top:10px;border-radius:14px;border:1px solid var(--line);overflow:hidden}
-    .item{padding:14px;border-radius:14px;background:var(--soft);border:1px solid var(--line);margin-bottom:10px;cursor:pointer}
-    .item b{font-size:16px}
-    .tag{display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.16);color:#cfcfd3;background:rgba(255,255,255,.05);margin-left:8px}
-    .tag.ok{border-color:rgba(120,255,180,.22);color:rgba(170,255,205,.95);background:rgba(120,255,180,.06)}
-    .tag.done{border-color:rgba(255,255,255,.18);color:#e7e7ea;background:rgba(255,255,255,.10)}
-    .tag.warn{border-color:rgba(255,77,79,.35);color:#ffd6d6;background:rgba(255,77,79,.10)}
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-    .btn{display:inline-block;border:0;padding:12px 14px;border-radius:14px;background:#fff;color:#000;font-weight:900;text-decoration:none;cursor:pointer}
-    .btn.sub{background:rgba(255,255,255,.10);color:#fff;font-weight:700;border:1px solid rgba(255,255,255,.16)}
-    label{display:block;font-size:12px;color:#d0d0d6;margin:10px 0 6px}
-    input, select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:#fff;font-size:14px;outline:none}
-    input::placeholder{color:rgba(255,255,255,.35)}
-    .grid{display:grid;grid-template-columns:1fr;gap:10px}
-    @media(min-width:760px){ .grid{grid-template-columns:1fr 1fr} }
-    .selectedBox{padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.22)}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:50;background:rgba(0,0,0,.80);border:1px solid rgba(255,255,255,.18);padding:10px 12px;border-radius:999px;font-size:13px;display:none;max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  :root{
+    /* Light theme */
+    --bg:#f6f7fb;
+    --card:#ffffff;
+    --soft:rgba(15, 23, 42, .04);
+    --line:rgba(15, 23, 42, .10);
+    --muted:#475569;
 
-    .barRow{margin:10px 0}
-    .barTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
-    .barName{font-weight:900}
-    .barMeta{color:var(--muted);font-size:12px}
-    .barTrack{height:10px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line);overflow:hidden;margin-top:8px}
-    .barFill{height:100%;background:#fff;border-radius:999px}
+    --text:#0f172a;
+    --title:#0b1220;
 
-    .noteBox{
-      margin-top:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.06);color:#e7e7ea;font-size:12px;white-space:pre-wrap
-    }
-    .dangerNote{
-      margin-top:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,77,79,.35);
-      background:rgba(255,77,79,.10);color:#ffd6d6;font-size:12px;display:none;white-space:pre-wrap
-    }
-  </style>
+    /* Accent */
+    --accent:#111827;          /* primary button bg */
+    --accentText:#ffffff;
+
+    --okBg:rgba(16,185,129,.10);
+    --okLine:rgba(16,185,129,.35);
+    --okText:#065f46;
+
+    --warnBg:rgba(239,68,68,.10);
+    --warnLine:rgba(239,68,68,.35);
+    --warnText:#7f1d1d;
+
+    --shadow: 0 8px 24px rgba(15, 23, 42, .08);
+  }
+
+  /* Base */
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:26px 16px 110px;
+  }
+
+  .heroTitle{
+    font-size:34px;
+    font-weight:900;
+    letter-spacing:-0.02em;
+    color:var(--title);
+    margin:6px 0 10px;
+  }
+
+  .heroSub{
+    color:var(--muted);
+    font-size:15px;
+    margin:0 0 16px;
+    line-height:1.55;
+  }
+
+  /* Cards */
+  .card{
+    margin-top:14px;
+    padding:18px;
+    border-radius:18px;
+    background:var(--card);
+    border:1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+
+  h2{
+    font-size:16px;
+    margin:0 0 10px;
+    color:var(--title);
+    letter-spacing:-0.01em;
+  }
+
+  .muted{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.55;
+  }
+
+  .hr{
+    height:1px;
+    background:var(--line);
+    margin:14px 0;
+  }
+
+  /* Map */
+  #map{
+    height:380px;
+    margin-top:10px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    overflow:hidden;
+    background:#e9eef7;
+  }
+
+  /* Event items */
+  .item{
+    padding:14px 14px;
+    border-radius:14px;
+    background:var(--soft);
+    border:1px solid var(--line);
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:transform .08s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+  .item:hover{
+    transform:translateY(-1px);
+    box-shadow: 0 10px 24px rgba(15,23,42,.10);
+    border-color: rgba(15,23,42,.16);
+  }
+  .item b{
+    font-size:16px;
+    color:var(--title);
+  }
+
+  /* Tags */
+  .tag{
+    display:inline-block;
+    font-size:12px;
+    padding:5px 9px;
+    border-radius:999px;
+    border:1px solid rgba(15,23,42,.14);
+    color:#1f2937;
+    background:rgba(15,23,42,.04);
+    margin-left:8px;
+    vertical-align:middle;
+  }
+  .tag.ok{
+    border-color:var(--okLine);
+    color:var(--okText);
+    background:var(--okBg);
+  }
+  .tag.done{
+    border-color:rgba(15,23,42,.18);
+    color:#334155;
+    background:rgba(15,23,42,.06);
+  }
+  .tag.warn{
+    border-color:var(--warnLine);
+    color:var(--warnText);
+    background:var(--warnBg);
+  }
+
+  /* Buttons */
+  .btnRow{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+
+  .btn{
+    display:inline-block;
+    border:0;
+    padding:14px 16px;          /* ✅ 더 크게 */
+    border-radius:14px;
+    background:var(--accent);
+    color:var(--accentText);
+    font-weight:900;
+    text-decoration:none;
+    cursor:pointer;
+    box-shadow: 0 10px 22px rgba(17,24,39,.14);
+    transition:transform .08s ease, filter .12s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); filter:brightness(1.02); }
+  .btn:active{ transform:translateY(0px); }
+
+  .btn.sub{
+    background:#ffffff;
+    color:var(--title);
+    font-weight:800;
+    border:1px solid rgba(15,23,42,.16);
+    box-shadow:none;
+  }
+
+  /* Form */
+  label{
+    display:block;
+    font-size:12px;
+    color:#334155;
+    margin:10px 0 6px;
+    font-weight:700;
+  }
+
+  input, select{
+    width:100%;
+    padding:13px 12px;          /* ✅ 입력도 더 크게 */
+    border-radius:12px;
+    border:1px solid rgba(15,23,42,.16);
+    background:#ffffff;
+    color:var(--title);
+    font-size:14px;
+    outline:none;
+    box-shadow: inset 0 1px 0 rgba(15,23,42,.04);
+  }
+  input::placeholder{ color:rgba(15,23,42,.40); }
+  input:focus, select:focus{
+    border-color:rgba(17,24,39,.35);
+    box-shadow: 0 0 0 4px rgba(17,24,39,.08);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  @media(min-width:760px){
+    .grid{ grid-template-columns:1fr 1fr; }
+  }
+
+  /* Selected box */
+  .selectedBox{
+    padding:14px;
+    border-radius:14px;
+    background:#ffffff;
+    border:1px dashed rgba(15,23,42,.22);
+  }
+  #selName{ color:var(--title); }
+  #selMeta{ color:var(--muted); }
+
+  /* Toast */
+  .toast{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:16px;
+    z-index:50;
+    background:rgba(17,24,39,.92);
+    border:1px solid rgba(255,255,255,.18);
+    padding:10px 12px;
+    border-radius:999px;
+    font-size:13px;
+    display:none;
+    max-width:92vw;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    color:#fff;
+  }
+
+  /* Bars */
+  .barRow{ margin:12px 0; }
+  .barTop{ display:flex; justify-content:space-between; gap:12px; align-items:flex-end; }
+  .barName{ font-weight:900; color:var(--title); }
+  .barMeta{ color:var(--muted); font-size:12px; }
+
+  .barTrack{
+    height:12px;                /* ✅ 더 두껍게 */
+    border-radius:999px;
+    background:rgba(15,23,42,.06);
+    border:1px solid rgba(15,23,42,.12);
+    overflow:hidden;
+    margin-top:8px;
+  }
+  .barFill{
+    height:100%;
+    background:var(--accent);
+    border-radius:999px;
+    opacity:.90;
+  }
+
+  /* Notes */
+  .noteBox{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(15,23,42,.14);
+    background:rgba(15,23,42,.04);
+    color:#334155;
+    font-size:12px;
+    white-space:pre-wrap;
+  }
+
+  .dangerNote{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid var(--warnLine);
+    background:var(--warnBg);
+    color:var(--warnText);
+    font-size:12px;
+    display:none;
+    white-space:pre-wrap;
+  }
+</style>
 </head>
 
 <body>
