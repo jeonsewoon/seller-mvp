@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "id": "ev_1766987310268",
+    "name": "동탄역파라곤",
+    "area": "동탄",
+    "start": "2026-01-08",
+    "end": "2026-01-10",
+    "address": "",
+    "lat": null,
+    "lng": null,
+    "capacity": 20,
+    "current": 20,
+    "note": ""
+  },
+  {
+    "id": "ev_1766987092227",
+    "name": "동탄역파라곤",
+    "area": "동탄",
+    "start": "2026-01-30",
+    "end": "2026-01-31",
+    "address": "경기도 화성시 동탄기흥로393-20",
+    "lat": null,
+    "lng": null,
+    "capacity": 20,
+    "current": 0,
+    "note": ""
+  }
+]
