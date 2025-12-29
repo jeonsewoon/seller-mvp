@@ -1,40 +1,14 @@
 [
   {
-    "id": "ev_3221815822380837",
-    "name": "실리콘앨이",
-    "area": "동탄",
-    "start": "2026-02-26",
-    "end": "2026-02-28",
-    "address": "동탄연청로150길",
-    "lat": null,
-    "lng": null,
-    "capacity": 0,
-    "current": 0,
-    "note": ""
-  },
-  {
-    "id": "ev_1291322038222966",
-    "name": "실리콘앨리동탄",
-    "area": "동탄",
-    "start": "2026-02-22",
-    "end": "2026-02-25",
-    "address": "",
-    "lat": null,
-    "lng": null,
-    "capacity": 0,
-    "current": 0,
-    "note": ""
-  },
-  {
-    "id": "ev_1258505399630905",
+    "id": "ev_1766987092227",
     "name": "동탄역파라곤",
     "area": "동탄",
-    "start": "2026-02-20",
-    "end": "2026-02-28",
-    "address": "경기도 동탄기흥로393-20",
+    "start": "2026-01-30",
+    "end": "2026-01-31",
+    "address": "경기도 화성시 동탄기흥로393-20",
     "lat": null,
     "lng": null,
-    "capacity": 7,
+    "capacity": 20,
     "current": 0,
     "note": ""
   }
