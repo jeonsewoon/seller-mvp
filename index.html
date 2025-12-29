@@ -3,145 +3,346 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#0b0b0c" />
   <title>뜻밖의 시장 | 셀러 전시</title>
 
-  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     :root{
-      /* Cool + simple dark */
-      --bg:#0b0b0c;
-      --card:#17181c;
-      --soft:rgba(255,255,255,.08);
-      --line:rgba(255,255,255,.16);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.68);
-      --brand:#B9FFDA; /* subtle mint */
-      --danger:#FF5A5F;
-      --shadow:0 18px 50px rgba(0,0,0,.35);
-      --radius:18px;
+      --bg:#0b0b0c; --card:#151519; --line:rgba(255,255,255,.12);
+      --txt:#f6f6f8; --muted:#c8c8cf;
+      --btn:#ffffff; --btnTxt:#000;
+      --chip:#2a2a31;
     }
     *{box-sizing:border-box}
     body{
-      margin:0;
+      margin:0; background:var(--bg); color:var(--txt);
       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-      background:var(--bg); color:var(--text);
-      font-size:16px;
     }
-    .wrap{max-width:900px;margin:0 auto;padding:22px 16px 110px}
-    .heroTitle{font-size:34px;font-weight:900;letter-spacing:-0.02em;margin:4px 0 8px}
-    .heroSub{color:var(--muted);font-size:14px;margin:0 0 14px;line-height:1.6}
-
+    .wrap{max-width:900px;margin:0 auto;padding:24px 16px 90px}
+    h1{margin:0 0 8px;font-size:34px;letter-spacing:-.02em}
+    .sub{margin:0 0 18px;color:var(--muted);font-size:14px;line-height:1.5}
     .card{
-      margin-top:14px;
-      padding:16px;
-      border-radius:var(--radius);
-      background:var(--card);
-      border:1px solid var(--line);
-      box-shadow:var(--shadow);
+      background:var(--card); border:1px solid var(--line);
+      border-radius:18px; padding:16px; margin-top:14px;
     }
-    h2{font-size:16px;margin:0 0 10px}
-    .muted{color:var(--muted);font-size:14px;line-height:1.6}
-    .hr{height:1px;background:rgba(255,255,255,.14);margin:14px 0}
-
-    #map{height:360px;margin-top:10px;border-radius:14px;border:1px solid var(--line);overflow:hidden}
-
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .hr{height:1px;background:var(--line);margin:14px 0}
+    #map{height:360px;border-radius:14px;border:1px solid var(--line);overflow:hidden}
+    .list{display:flex;flex-direction:column;gap:10px}
     .item{
-      padding:14px;
-      border-radius:16px;
-      background:var(--soft);
-      border:1px solid rgba(255,255,255,.14);
-      margin-bottom:10px;
-      cursor:pointer;
+      padding:14px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(255,255,255,.04); cursor:pointer;
     }
-    .item:hover{border-color:rgba(185,255,218,.28)}
+    .itemTitle{display:flex;gap:10px;align-items:center;justify-content:space-between}
     .item b{font-size:16px}
-
-    .tag{
-      display:inline-block;
-      font-size:11px;
-      padding:5px 9px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      color:rgba(255,255,255,.82);
-      background:rgba(255,255,255,.06);
-      margin-left:8px;
-      vertical-align:middle;
-    }
-    .tag.ok{
-      border-color:rgba(185,255,218,.35);
-      color:var(--brand);
-      background:rgba(185,255,218,.10);
-    }
-    .tag.done{
-      border-color:rgba(255,90,95,.35);
-      color:#ffd0d2;
-      background:rgba(255,90,95,.12);
-    }
-
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .meta{color:var(--muted);font-size:13px;margin-top:4px}
+    .chip{background:var(--chip);border:1px solid var(--line);padding:6px 10px;border-radius:999px;font-size:12px;color:var(--txt)}
+    .chip.ok{border-color:rgba(120,255,180,.25)}
+    .chip.bad{border-color:rgba(255,120,120,.25)}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     .btn{
-      display:inline-flex;align-items:center;justify-content:center;
-      border:0;padding:14px 18px;border-radius:16px;
-      background:#fff;color:#000;font-weight:900;text-decoration:none;
-      cursor:pointer;min-height:52px;font-size:16px;
+      display:inline-block; border:0; border-radius:14px;
+      padding:14px 16px; font-weight:900; font-size:16px;
+      background:var(--btn); color:var(--btnTxt); cursor:pointer; text-decoration:none;
     }
     .btn.sub{
-      background:rgba(255,255,255,.12);
-      color:#fff;
+      background:transparent; color:var(--txt);
+      border:1px solid rgba(255,255,255,.18);
       font-weight:800;
-      border:1px solid rgba(255,255,255,.22);
     }
-
-    label{display:block;font-size:12px;color:rgba(255,255,255,.78);margin:10px 0 6px}
-    input, select{
-      width:100%;padding:13px;border-radius:14px;border:1px solid rgba(255,255,255,.16);
-      background:rgba(0,0,0,.28);color:#fff;font-size:15px;outline:none
+    .warn{
+      margin-top:12px; padding:12px 14px; border-radius:14px;
+      border:1px solid rgba(255,120,120,.30);
+      background:rgba(255,120,120,.10);
+      color:#ffe3e3; font-size:13px; white-space:pre-wrap;
+      display:none;
     }
-    input::placeholder{color:rgba(255,255,255,.40)}
-    input:focus,select:focus{
-      border-color:rgba(185,255,218,.45);
-      box-shadow:0 0 0 4px rgba(185,255,218,.12);
+    .selected{
+      border:1px dashed rgba(255,255,255,.28);
+      background:rgba(255,255,255,.03);
+      padding:14px;border-radius:14px;
+    }
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
+    input,select{
+      width:100%; padding:12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25); color:var(--txt); font-size:15px; outline:none;
     }
     .grid{display:grid;grid-template-columns:1fr;gap:10px}
-    @media(min-width:760px){ .grid{grid-template-columns:1fr 1fr} }
+    @media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <noscript style="color:white;padding:20px;display:block">
+    자바스크립트가 꺼져 있어요. 켜고 다시 접속해 주세요.
+  </noscript>
 
-    .selectedBox{
-      padding:14px;border-radius:16px;
-      background:rgba(255,255,255,.04);
-      border:1px dashed rgba(255,255,255,.26)
-    }
-    .toast{
-      position:fixed;left:50%;transform:translateX(-50%);
-      bottom:16px;z-index:50;background:rgba(0,0,0,.82);
-      border:1px solid rgba(255,255,255,.18);padding:10px 14px;border-radius:999px;
-      font-size:13px;display:none;max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
-    }
-    .dangerNote{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:16px;
-      border:1px solid rgba(255,90,95,.35);
-      background:rgba(255,90,95,.12);
-      color:#ffd0d2;
-      font-size:13px;
-      display:none;
-      white-space:pre-wrap;
-      line-height:1.55;
-    }
+  <div class="wrap">
+    <h1>뜻밖의 시장</h1>
+    <p class="sub">지도에서 위치 확인 → 행사 선택 → 셀러 지원(행사명 자동입력)</p>
 
-    /* stats bars */
-    .barRow{margin:10px 0}
-    .barTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
-    .barName{font-weight:900}
-    .barMeta{color:var(--muted);font-size:12px}
-    .barTrack{
-      height:10px;border-radius:999px;background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.16);overflow:hidden;margin-top:8px
+    <div class="card">
+      <div class="row">
+        <div>
+          <b>행사지도</b>
+          <div class="meta">lat/lng가 있는 행사만 지도 핀 표시</div>
+        </div>
+        <span class="chip" id="eventCount">0개</span>
+      </div>
+      <div class="hr"></div>
+      <div id="map"></div>
+      <div class="warn" id="mapWarn"></div>
+    </div>
+
+    <div class="card">
+      <b>출점 공고</b>
+      <div class="meta">행사를 선택한 뒤 지원하기를 누르세요.</div>
+      <div class="hr"></div>
+      <div class="list" id="eventList"></div>
+      <div class="warn" id="listWarn"></div>
+
+      <div class="hr"></div>
+      <div class="selected">
+        <b id="selName">선택된 행사 없음</b>
+        <div class="meta" id="selMeta"></div>
+      </div>
+
+      <div class="btnRow">
+        <a class="btn" id="applyBtn"
+          href="https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform">
+          이 행사를 지원하기
+        </a>
+        <button class="btn sub" id="refreshBtn" type="button">새로 불러오기</button>
+      </div>
+
+      <div class="warn" id="fatal"></div>
+    </div>
+
+    <div class="card">
+      <b>기존 셀러 정보 (1회 저장)</b>
+      <div class="meta">이 기기(LocalStorage)에만 저장됩니다.</div>
+      <div class="hr"></div>
+
+      <div class="grid">
+        <div><label>상호명 *</label><input id="p_brand" placeholder="예) 출출빌라" /></div>
+        <div><label>대표자 이름 *</label><input id="p_owner" placeholder="예) 전세운" /></div>
+        <div><label>휴대폰번호 *</label><input id="p_phone" inputmode="tel" placeholder="예) 010-1234-5678" /></div>
+        <div><label>이메일 *</label><input id="p_email" inputmode="email" placeholder="예) marketfindout@gmail.com" /></div>
+        <div>
+          <label>판매 카테고리 *</label>
+          <select id="p_category">
+            <option value="">선택</option>
+            <option value="푸드">푸드</option>
+            <option value="디저트">디저트</option>
+            <option value="수공예">수공예</option>
+            <option value="라이프스타일">라이프스타일</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div><label>인스타그램</label><input id="p_insta" placeholder="예) @brandname" /></div>
+      </div>
+
+      <div class="btnRow">
+        <button class="btn" id="saveProfile" type="button">내 정보 저장</button>
+        <button class="btn sub" id="clearProfile" type="button">저장 삭제</button>
+        <span class="chip ok" id="profileStatus">저장되지 않음</span>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const SELLER_FORM_BASE = "https://docs.google.com/forms/d/e/1FAIpQLScbJPOJKWT_rNJaBsx81N86KelknR7EaWQ_dPvoGcXEcDTSSg/viewform";
+  const ENTRY_EVENT_NAME = "entry.1498135098";
+  const LS_PROFILE = "um_profile_v1";
+  let EVENTS = [];
+  let selected = null;
+  let map, layer;
+
+  const show = (id, msg) => { const el=$(id); el.style.display="block"; el.textContent=msg; };
+  const hide = (id) => { const el=$(id); el.style.display="none"; el.textContent=""; };
+  const safe = (v) => (v==null) ? "" : String(v);
+  const num = (v, d=0) => { const n = Number(v); return Number.isFinite(n) ? n : d; };
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+
+  function fmtRange(s,e){ s=safe(s); e=safe(e); return (s&&e)?`${s} ~ ${e}`:(s||e); }
+
+  function normalize(raw){
+    return {
+      id: safe(raw.id).trim() || ("ev_" + Math.random().toString(16).slice(2)),
+      name: safe(raw.name).trim(),
+      area: safe(raw.area).replace(/\u200B|\u200C|\u200D|\uFEFF/g, "").trim(),
+      start: safe(raw.start).trim(),
+      end: safe(raw.end).trim(),
+      address: safe(raw.address).trim(),
+      lat: (raw.lat===null||raw.lat===""||typeof raw.lat==="undefined") ? null : Number(raw.lat),
+      lng: (raw.lng===null||raw.lng===""||typeof raw.lng==="undefined") ? null : Number(raw.lng),
+      capacity: num(raw.capacity, 0),
+      current: num(raw.current, 0),
+      note: safe(raw.note).trim(),
+    };
+  }
+
+  async function loadEvents(){
+    const res = await fetch(`./events.json?ts=${Date.now()}`, { cache:"no-store" });
+    if(!res.ok) throw new Error(`events.json 불러오기 실패 (${res.status})`);
+    const data = await res.json();
+    if(!Array.isArray(data)) throw new Error("events.json 형식 오류: 배열이 아님");
+    EVENTS = data.map(normalize).filter(e=>e.name);
+    EVENTS.sort((a,b)=> safe(a.start).localeCompare(safe(b.start)));
+    $("eventCount").textContent = `${EVENTS.length}개`;
+  }
+
+  function initMap(){
+    if(map) return;
+    map = L.map("map", { scrollWheelZoom:false }).setView([37.5665,126.9780], 11);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution:"© OpenStreetMap" }).addTo(map);
+    layer = L.layerGroup().addTo(map);
+  }
+
+  function renderMap(){
+    initMap();
+    layer.clearLayers();
+    const pts = [];
+    for(const ev of EVENTS){
+      if(typeof ev.lat !== "number" || typeof ev.lng !== "number" || Number.isNaN(ev.lat) || Number.isNaN(ev.lng)) continue;
+      pts.push([ev.lat, ev.lng]);
+      const m = L.marker([ev.lat, ev.lng]).addTo(layer);
+      const date = fmtRange(ev.start, ev.end);
+      m.bindPopup(`<b>${esc(ev.name)}</b><br><span>${esc(date)}</span><br><span style="color:#999">${esc(ev.address)}</span>`);
+      m.on("click", () => select(ev.id));
     }
-    .barFill{
+    if(pts.length){
+      hide("mapWarn");
+      map.fitBounds(L.latLngBounds(pts), { padding:[30,30] });
+    }else{
+      show("mapWarn", "lat/lng가 없어 지도 핀이 없습니다. (정상) 좌표가 필요하면 나중에 자동화 붙이면 돼요.");
+    }
+  }
+
+  function renderList(){
+    const wrap = $("eventList");
+    wrap.innerHTML = "";
+    if(!EVENTS.length){
+      show("listWarn", "행사가 없습니다. 관리자(admin)에서 events.json 저장 후 다시 시도하세요.");
+      return;
+    }
+    hide("listWarn");
+
+    for(const ev of EVENTS){
+      const div = document.createElement("div");
+      div.className = "item";
+      div.onclick = () => select(ev.id);
+      const date = fmtRange(ev.start, ev.end);
+      const status = (ev.capacity>0 && ev.current>=ev.capacity) ? `<span class="chip bad">마감</span>` : `<span class="chip ok">모집중</span>`;
+      div.innerHTML = `
+        <div class="itemTitle">
+          <b>${esc(ev.name)}</b>
+          ${status}
+        </div>
+        <div class="meta">${esc(date)} · ${esc(ev.area)} ${ev.address ? "· "+esc(ev.address) : ""}</div>
+      `;
+      wrap.appendChild(div);
+    }
+  }
+
+  function select(id){
+    const ev = EVENTS.find(e=>e.id===id);
+    if(!ev) return;
+    selected = ev;
+    $("selName").textContent = ev.name;
+    const date = fmtRange(ev.start, ev.end);
+    $("selMeta").textContent = [date, ev.area, ev.address].filter(Boolean).join(" · ");
+  }
+
+  function buildFormUrl(ev){
+    const date = fmtRange(ev.start, ev.end);
+    const val = date ? `${ev.name} (${date})` : ev.name;
+    return `${SELLER_FORM_BASE}?usp=pp_url&${ENTRY_EVENT_NAME}=${encodeURIComponent(val)}`;
+  }
+
+  function loadProfile(){ try { return JSON.parse(localStorage.getItem(LS_PROFILE)) || null; } catch { return null; } }
+  function refreshProfile(){
+    const p = loadProfile();
+    const tag = $("profileStatus");
+    if(!p){
+      tag.textContent = "저장되지 않음";
+      tag.className = "chip ok";
+      ["p_brand","p_owner","p_phone","p_email","p_insta"].forEach(k => $(k).value="");
+      $("p_category").value = "";
+      return;
+    }
+    tag.textContent = "저장됨";
+    tag.className = "chip ok";
+    $("p_brand").value = p.brand||"";
+    $("p_owner").value = p.owner||"";
+    $("p_phone").value = p.phone||"";
+    $("p_email").value = p.email||"";
+    $("p_category").value = p.category||"";
+    $("p_insta").value = p.insta||"";
+  }
+
+  $("saveProfile").addEventListener("click", () => {
+    const p = {
+      brand: $("p_brand").value.trim(),
+      owner: $("p_owner").value.trim(),
+      phone: $("p_phone").value.trim(),
+      email: $("p_email").value.trim(),
+      category: $("p_category").value.trim(),
+      insta: $("p_insta").value.trim()
+    };
+    if(!p.brand || !p.owner || !p.phone || !p.email || !p.category){
+      alert("필수 항목(상호/이름/전화/이메일/카테고리)을 입력해 주세요");
+      return;
+    }
+    localStorage.setItem(LS_PROFILE, JSON.stringify(p));
+    refreshProfile();
+    alert("저장 완료");
+  });
+
+  $("clearProfile").addEventListener("click", () => {
+    localStorage.removeItem(LS_PROFILE);
+    refreshProfile();
+    alert("삭제 완료");
+  });
+
+  $("applyBtn").addEventListener("click", (e) => {
+    if(!selected){ e.preventDefault(); alert("먼저 행사를 선택해 주세요"); return; }
+    if(!loadProfile()){ e.preventDefault(); alert("먼저 '기존 셀러 정보'를 저장해 주세요"); return; }
+    e.preventDefault();
+    window.location.href = buildFormUrl(selected);
+  });
+
+  $("refreshBtn").addEventListener("click", async () => {
+    try{
+      hide("fatal");
+      await loadEvents();
+      renderList();
+      renderMap();
+      if(EVENTS[0]) select(EVENTS[0].id);
+    }catch(err){
+      show("fatal", "데이터 로딩 실패:\n" + err.message);
+    }
+  });
+
+  // boot (절대 검은 화면 방지: try/catch)
+  (async () => {
+    try{
+      refreshProfile();
+      initMap();
+      await loadEvents();
+      renderList();
+      renderMap();
+      if(EVENTS[0]) select(EVENTS[0].id);
+    }catch(err){
+      show("fatal", "페이지 로딩 중 오류:\n" + err.message + "\n\n(관리자에서 events.json 저장 여부/경로 확인 필요)");
+    }
+  })();
+})();
+</script>
+</body>
+</html>
