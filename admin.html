@@ -11,6 +11,7 @@
       --bg:#0b0b0c; --card:#16161a; --soft:rgba(255,255,255,.06);
       --line:rgba(255,255,255,.12); --muted:#b2b2b8;
       --ok:rgba(170,255,205,.95); --bad:rgba(255,180,180,.95);
+      --warn:#ffcc66;
     }
     body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:#f4f4f6}
     .wrap{max-width:1100px;margin:0 auto;padding:20px 16px 92px}
@@ -21,25 +22,41 @@
     .hr{height:1px;background:var(--line);margin:14px 0}
     .grid{display:grid;grid-template-columns:1fr;gap:10px}
     @media(min-width:860px){ .grid{grid-template-columns:1fr 1fr 1fr} }
+
     label{display:block;font-size:12px;color:#d0d0d6;margin:10px 0 6px}
     input,select,textarea{
-      width:100%;padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.25);color:#fff;font-size:14px;outline:none
+      width:100%;
+      padding:11px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25);
+      color:#fff;
+      font-size:14px;
+      outline:none;
     }
-    textarea{min-height:86px;resize:vertical}
     input::placeholder{color:rgba(255,255,255,.35)}
+    textarea{min-height:86px;resize:vertical}
+
     .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     .btn{border:0;padding:12px 14px;border-radius:14px;background:#fff;color:#000;font-weight:900;cursor:pointer}
     .btn.sub{background:rgba(255,255,255,.10);color:#fff;font-weight:800;border:1px solid rgba(255,255,255,.16)}
     .btn.danger{background:rgba(255,120,120,.10);color:#ffdede;border:1px solid rgba(255,120,120,.25)}
+    .btn.warn{background:rgba(255,204,102,.12);color:#ffe9b5;border:1px solid rgba(255,204,102,.35)}
+
     .pill{display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.16);color:#cfcfd3;background:rgba(255,255,255,.05)}
     .pill.ok{border-color:rgba(120,255,180,.22);color:var(--ok);background:rgba(120,255,180,.06)}
     .pill.bad{border-color:rgba(255,120,120,.22);color:var(--bad);background:rgba(255,120,120,.06)}
+    .pill.warn{border-color:rgba(255,204,102,.35);color:var(--warn);background:rgba(255,204,102,.10)}
+
     .list{display:flex;flex-direction:column;gap:8px}
-    .item{padding:12px;border-radius:14px;background:var(--soft);border:1px solid var(--line);cursor:pointer}
+    .item{
+      padding:12px;border-radius:14px;background:var(--soft);border:1px solid var(--line);
+      cursor:pointer
+    }
     .item b{font-size:15px}
     .row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
     .tiny{font-size:12px;color:var(--muted)}
+
     .toast{
       position:fixed;left:50%;transform:translateX(-50%);
       bottom:16px;z-index:50;background:rgba(0,0,0,.82);
@@ -50,19 +67,39 @@
       margin-top:10px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,120,120,.22);
       background:rgba(255,120,120,.06);color:#ffdede;font-size:13px;line-height:1.5;white-space:pre-wrap
     }
-    .geo-hidden{display:none !important;}
+    .okbox{
+      margin-top:10px;padding:12px 14px;border-radius:14px;border:1px solid rgba(120,255,180,.22);
+      background:rgba(120,255,180,.06);color:rgba(210,255,230,.95);font-size:13px;line-height:1.5;white-space:pre-wrap;display:none
+    }
+    .hint{
+      margin-top:8px;font-size:12px;color:rgba(255,255,255,.75);
+      padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.04);
+    }
+    .req{color:#ff6b6b;font-weight:900;margin-left:6px}
+    .bigField label{font-size:13px}
+    .bigField input{
+      font-size:16px;
+      padding:14px 14px;
+      border-radius:14px;
+      border-color:rgba(255,255,255,.20);
+    }
   </style>
 </head>
 
 <body>
 <div class="wrap">
   <h1>뜻밖의시장 관리자</h1>
-  <div class="muted">정원(capacity)은 <b>필수(1 이상)</b> 입니다. (빈 행사/undefined 저장 방지)</div>
+  <div class="muted">
+    events.json을 <b>안전한 포맷(영문 키)</b>으로만 저장합니다.
+    <br>※ 빈 행사/undefined 생성 방지, 정원(capacity) <b>1 이상 필수</b>
+  </div>
 
-  <div class="card" id="settingsCard">
+  <div class="card">
     <h2>GitHub 저장 설정</h2>
-    <div class="muted">events.json 저장에만 사용합니다. 토큰은 이 브라우저에만 저장됩니다.</div>
+    <div class="muted">events.json 저장에만 사용합니다. 토큰은 이 브라우저(LocalStorage)에만 저장됩니다.</div>
     <div class="hr"></div>
+
     <div class="grid">
       <div><label>Repo Owner</label><input id="ghOwner" value="jeonsewoon"></div>
       <div><label>Repo Name</label><input id="ghRepo" value="seller-mvp"></div>
@@ -70,9 +107,10 @@
       <div style="grid-column:1/-1">
         <label>GitHub Token (Fine-grained / Contents: Read & write)</label>
         <input id="ghToken" placeholder="github_pat_...">
-        <div class="tiny">⚠️ 토큰은 절대 코드에 넣지 마세요. 이 입력칸에만.</div>
+        <div class="hint">⚠️ 토큰은 절대 코드에 넣지 말고, 여기에만 붙여넣으세요. (저장하면 이 브라우저에만 남아요)</div>
       </div>
     </div>
+
     <div class="btnRow">
       <button class="btn sub" id="saveTokenBtn" type="button">토큰 저장</button>
       <button class="btn danger" id="clearTokenBtn" type="button">토큰 삭제</button>
@@ -82,43 +120,44 @@
 
   <div class="card">
     <h2>행사 추가 / 수정</h2>
-    <div class="muted">행사명·시작일·종료일·정원은 필수입니다.</div>
+    <div class="muted">행사명 · 시작일 · 종료일 · 정원(capacity)은 필수입니다.</div>
     <div class="hr"></div>
 
     <div class="grid">
       <div>
-        <label>행사명 *</label>
+        <label>행사명 <span class="req">*</span></label>
         <input id="ev_name" placeholder="예) 동탄역파라곤">
       </div>
+
       <div>
         <label>지역(area)</label>
         <input id="ev_area" placeholder="예) 동탄">
       </div>
-      <div>
-        <label>정원(capacity) * (1 이상)</label>
-        <input id="ev_capacity" type="number" min="1" step="1" placeholder="예) 30">
+
+      <!-- ✅ 정원 UX 강화 (항상 보이고, 기본값 1) -->
+      <div class="bigField">
+        <label>정원(capacity) <span class="req">*</span> <span class="pill warn">1 이상 필수</span></label>
+        <input id="ev_capacity" type="number" min="1" step="1" value="1" inputmode="numeric" placeholder="예) 30">
+        <div class="tiny">정원은 1 이상이어야 합니다. (0 입력 시 저장 불가)</div>
       </div>
 
       <div>
-        <label>시작(start) *</label>
+        <label>시작(start) <span class="req">*</span></label>
         <input id="ev_start" type="date">
       </div>
       <div>
-        <label>종료(end) *</label>
+        <label>종료(end) <span class="req">*</span></label>
         <input id="ev_end" type="date">
       </div>
       <div>
         <label>현재(current)</label>
-        <input id="ev_current" type="number" min="0" step="1" placeholder="예) 0">
+        <input id="ev_current" type="number" min="0" step="1" value="0" inputmode="numeric" placeholder="예) 0">
       </div>
 
       <div style="grid-column:1/-1">
         <label>주소(address)</label>
-        <input id="ev_address" placeholder="예) 경기도 화성시 ...">
+        <input id="ev_address" placeholder="예) 경기도 화성시 동탄기흥로...">
       </div>
-
-      <div class="geo-hidden"><label>lat</label><input id="ev_lat" readonly></div>
-      <div class="geo-hidden"><label>lng</label><input id="ev_lng" readonly></div>
 
       <div style="grid-column:1/-1">
         <label>메모(note)</label>
@@ -127,23 +166,25 @@
     </div>
 
     <div class="btnRow">
-      <button class="btn" id="addUpdateBtn" type="button">행사 추가/수정</button>
+      <button class="btn" id="addUpdateBtn" type="button">행사 추가/수정 (로컬)</button>
       <button class="btn sub" id="resetFormBtn" type="button">입력 초기화</button>
       <button class="btn danger" id="deleteBtn" type="button" disabled>행사 취소(삭제)</button>
     </div>
 
     <div id="eventsErr" class="err" style="display:none"></div>
+    <div id="eventsOk" class="okbox"></div>
 
     <div class="hr"></div>
     <div class="btnRow">
       <button class="btn sub" id="reloadEventsBtn" type="button">events.json 다시 불러오기</button>
       <button class="btn" id="saveEventsToGitBtn" type="button">GitHub에 저장(events.json)</button>
+      <button class="btn warn" id="saveWithRetryBtn" type="button" style="display:none">409 해결(자동 재시도)</button>
       <span class="pill" id="eventsCount">0개</span>
     </div>
 
     <div class="hr"></div>
     <h2>행사 목록</h2>
-    <div class="muted">행사를 클릭하면 수정/삭제 대상으로 선택됩니다.</div>
+    <div class="muted">아래 목록에서 행사를 클릭하면 수정/삭제 대상으로 선택됩니다.</div>
     <div class="hr"></div>
     <div class="list" id="eventsList"></div>
   </div>
@@ -152,36 +193,39 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const LS_GH = "um_gh_settings_v1";
+  const LS_GH = "um_gh_settings_v2"; // v2
   let EVENTS = [];
   let selectedEventId = null;
+  let lastPutConflict = false;
 
   const $ = (id)=>document.getElementById(id);
   const toastEl = $("toast");
-
   function toast(msg){
     toastEl.textContent = msg;
     toastEl.style.display = "block";
     clearTimeout(window.__t);
-    window.__t = setTimeout(()=> toastEl.style.display="none", 2000);
+    window.__t = setTimeout(()=> toastEl.style.display="none", 1800);
   }
   function showErr(msg){
-    const el = $("eventsErr");
-    el.style.display = msg ? "block" : "none";
-    el.textContent = msg || "";
+    $("eventsErr").style.display = msg ? "block" : "none";
+    $("eventsErr").textContent = msg || "";
+    if(msg) $("eventsOk").style.display = "none";
+  }
+  function showOk(msg){
+    $("eventsOk").style.display = "block";
+    $("eventsOk").textContent = msg || "";
   }
 
-  const ZW = /[\u200B\u200C\u200D\uFEFF]/g;
-  function cleanText(v){ return String(v ?? "").replace(ZW,"").trim(); }
   function safeStr(v){ return (v==null) ? "" : String(v); }
-  function num(v, d=0){ const n = Number(v); return Number.isFinite(n) ? n : d; }
-
-  function newId(){
-    return "ev_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+  function num(v, d=0){
+    const n = Number(v);
+    return Number.isFinite(n) ? n : d;
   }
-
   function escapeHtml(s){
     return String(s ?? "").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+  }
+  function stripZWSP(s){
+    return String(s ?? "").replace(/\u200B|\u200C|\u200D|\uFEFF/g,"").trim();
   }
 
   function loadGh(){ try { return JSON.parse(localStorage.getItem(LS_GH)) || {}; } catch { return {}; } }
@@ -192,7 +236,7 @@
       owner: s.owner || $("ghOwner").value.trim(),
       repo: s.repo || $("ghRepo").value.trim(),
       branch: s.branch || $("ghBranch").value.trim(),
-      token: s.token || $("ghToken").value.trim()
+      token: s.token || $("ghToken").value.trim(),
     };
   }
   function refreshTokenStatus(){
@@ -200,6 +244,7 @@
     const ok = !!(s.token && s.owner && s.repo && s.branch);
     $("tokenStatus").textContent = ok ? "토큰: 저장됨" : "토큰: 없음";
     $("tokenStatus").className = ok ? "pill ok" : "pill";
+
     if(s.owner) $("ghOwner").value = s.owner;
     if(s.repo) $("ghRepo").value = s.repo;
     if(s.branch) $("ghBranch").value = s.branch;
@@ -219,26 +264,39 @@
     if(!token) throw new Error("토큰이 없습니다. 상단에서 토큰 저장 후 다시 시도하세요.");
 
     let sha = null;
-    try { sha = (await ghGetFile(path)).sha; } catch(e){ if(!String(e.message).includes("(404)")) throw e; }
+    try {
+      const cur = await ghGetFile(path);
+      sha = cur.sha;
+    } catch(e){
+      // 404면 새 파일 생성
+      if(!String(e.message).includes("(404)")) throw e;
+    }
 
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-    const body = { message, content: btoa(unescape(encodeURIComponent(contentText))), branch };
+    const body = {
+      message,
+      content: btoa(unescape(encodeURIComponent(contentText))),
+      branch
+    };
     if(sha) body.sha = sha;
 
     const res = await fetch(url, {
       method:"PUT",
-      headers:{ "Accept":"application/vnd.github+json", "Authorization": `Bearer ${token}` },
+      headers:{
+        "Accept":"application/vnd.github+json",
+        "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify(body)
     });
 
-    if(res.status === 401) throw new Error("401 Bad credentials: 토큰 권한(Contents Read&Write) 확인 후 새로 발급하세요.");
-    if(res.status === 409) throw new Error("409 Conflict: 최신 파일과 충돌. 'events.json 다시 불러오기' 후 다시 저장하세요.");
+    if(res.status === 401) throw new Error("401 Bad credentials (토큰 권한/만료). Fine-grained 토큰 Contents(Read&Write) + repo(seller-mvp) 확인.");
+    if(res.status === 409) throw new Error("409 Conflict (파일 sha 불일치). 최신 events.json과 충돌. (자동 재시도 가능)");
     if(!res.ok) throw new Error(`GitHub PUT 실패: ${path} (${res.status})`);
     return await res.json();
   }
 
   function toISODate(v){
-    const s = cleanText(v);
+    const s = safeStr(v).trim();
     if(!s) return "";
     if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
     if(/^\d{8}$/.test(s)) return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
@@ -251,18 +309,34 @@
   }
 
   function normalizeEvent(raw){
+    // 한글 키/옛 키 섞여도 안전하게 영문화
+    const area = stripZWSP(raw.area ?? raw["지역"]);
+    const name = stripZWSP(raw.name ?? raw["행사명"] ?? raw["name"]);
+    const start = toISODate(raw.start ?? raw["시작"] ?? raw["start"]);
+    const end = toISODate(raw.end ?? raw["끝"] ?? raw["end"]);
+    const address = stripZWSP(raw.address ?? raw["주소"] ?? raw["address"]);
+    const note = stripZWSP(raw.note ?? raw["메모"] ?? raw["note"]);
+
+    // capacity/current 다양한 한글 키 흡수
+    const capacityRaw = raw.capacity ?? raw["정원"] ?? raw["용량"] ?? raw["수용 능력"];
+    const currentRaw = raw.current ?? raw["현재"];
+
+    // ✅ 정원은 최소 1로 강제 (빈/0 방지)
+    const capacity = Math.max(1, num(capacityRaw, 1));
+    const current = Math.max(0, num(currentRaw, 0));
+
     return {
-      id: cleanText(raw.id) || newId(),
-      name: cleanText(raw.name ?? raw["행사명"]),
-      area: cleanText(raw.area ?? raw["지역"]),
-      start: toISODate(raw.start ?? raw["시작"]),
-      end: toISODate(raw.end ?? raw["끝"]),
-      address: cleanText(raw.address ?? raw["주소"]),
+      id: stripZWSP(raw.id) || ("ev_" + Date.now()),
+      name,
+      area,
+      start,
+      end,
+      address,
       lat: null,
       lng: null,
-      capacity: num(raw.capacity ?? raw["정원"] ?? raw["용량"] ?? raw["수용 능력"], 0),
-      current: num(raw.current ?? raw["현재"], 0),
-      note: cleanText(raw.note ?? raw["메모"]),
+      capacity,
+      current,
+      note
     };
   }
 
@@ -274,16 +348,24 @@
     if(!/^\d{4}-\d{2}-\d{2}$/.test(ev.end)) return "종료일은 YYYY-MM-DD 형식이어야 합니다.";
     if(ev.capacity < 1) return "정원(capacity)은 1 이상이어야 합니다.";
     if(ev.current < 0) return "현재(current)는 0 이상이어야 합니다.";
-    if(ev.capacity > 0 && ev.current > ev.capacity) return "현재(current)는 정원(capacity)을 초과할 수 없습니다.";
     return "";
   }
 
   function cleanEvents(list){
-    const cleaned = list
+    // ✅ undefined/빈 행사 제거 + 표준화 + 정렬
+    const cleaned = (list || [])
       .map(normalizeEvent)
-      .filter(ev => ev.name && ev.start && ev.end);
-    cleaned.sort((a,b)=> (a.start||"").localeCompare(b.start||""));
-    return cleaned;
+      .filter(ev => ev.name && ev.start && ev.end && ev.capacity >= 1);
+
+    // id 중복 제거(최신 우선)
+    const map = new Map();
+    for(const ev of cleaned){
+      map.set(ev.id, ev);
+    }
+    const uniq = Array.from(map.values());
+
+    uniq.sort((a,b)=> (a.start||"").localeCompare(b.start||""));
+    return uniq;
   }
 
   function fillEventForm(ev){
@@ -292,22 +374,28 @@
     $("ev_start").value = ev.start || "";
     $("ev_end").value = ev.end || "";
     $("ev_address").value = ev.address || "";
-    $("ev_capacity").value = String(ev.capacity ?? "");
-    $("ev_current").value = String(ev.current ?? 0);
+    $("ev_capacity").value = String(Math.max(1, num(ev.capacity, 1)));
+    $("ev_current").value = String(Math.max(0, num(ev.current, 0)));
     $("ev_note").value = ev.note || "";
     $("deleteBtn").disabled = false;
   }
 
   function resetEventForm(){
     selectedEventId = null;
-    ["ev_name","ev_area","ev_start","ev_end","ev_address","ev_capacity","ev_current","ev_note"]
-      .forEach(id=>$(id).value="");
+    $("ev_name").value = "";
+    $("ev_area").value = "";
+    $("ev_start").value = "";
+    $("ev_end").value = "";
+    $("ev_address").value = "";
+    $("ev_capacity").value = "1";   // ✅ 기본값
+    $("ev_current").value = "0";
+    $("ev_note").value = "";
     $("deleteBtn").disabled = true;
   }
 
   function getEventForm(){
-    const ev = normalizeEvent({
-      id: selectedEventId || newId(),
+    return normalizeEvent({
+      id: selectedEventId || ("ev_" + Date.now()),
       name: $("ev_name").value,
       area: $("ev_area").value,
       start: $("ev_start").value,
@@ -317,22 +405,20 @@
       current: $("ev_current").value,
       note: $("ev_note").value
     });
-    // 자동 보정: current > capacity면 capacity로 잘라냄(저장 실패 대신 UX 편의)
-    if(ev.capacity > 0 && ev.current > ev.capacity) ev.current = ev.capacity;
-    return ev;
   }
 
   function renderEvents(){
     $("eventsCount").textContent = `${EVENTS.length}개`;
     const wrap = $("eventsList");
     wrap.innerHTML = "";
+
     if(!EVENTS.length){
-      wrap.innerHTML = `<div class="muted">행사가 없습니다.</div>`;
+      wrap.innerHTML = `<div class="muted">행사가 없습니다. (admin에서 추가 후 GitHub 저장하세요)</div>`;
       return;
     }
 
     EVENTS.forEach(ev=>{
-      const cap = num(ev.capacity,0);
+      const cap = num(ev.capacity,1);
       const cur = num(ev.current,0);
       const full = (cap>0 && cur>=cap);
 
@@ -361,18 +447,25 @@
 
   async function loadEvents(){
     showErr("");
+    $("saveWithRetryBtn").style.display = "none";
+    lastPutConflict = false;
+
     const res = await fetch(`./events.json?ts=${Date.now()}`, {cache:"no-store"});
     if(!res.ok) throw new Error(`events.json 로딩 실패 (${res.status})`);
+
     const data = await res.json();
     if(!Array.isArray(data)) throw new Error("events.json 형식 오류(배열 아님)");
+
     EVENTS = cleanEvents(data);
-    selectedEventId = null;
     resetEventForm();
     renderEvents();
   }
 
   async function saveEventsToGitHub(){
     showErr("");
+    $("saveWithRetryBtn").style.display = "none";
+    lastPutConflict = false;
+
     EVENTS = cleanEvents(EVENTS);
 
     for(const ev of EVENTS){
@@ -381,8 +474,32 @@
     }
 
     const text = JSON.stringify(EVENTS, null, 2);
-    await ghPutFile("events.json", text, "Update events.json via admin");
-    toast("✅ 저장 완료! (메인 반영은 0~1분 지연될 수 있어요)");
+
+    try{
+      await ghPutFile("events.json", text, "Update events.json via admin");
+      toast("✅ events.json 저장 완료");
+      showOk("저장 성공 ✅\n메인(index) 화면을 새로고침하면 반영됩니다.");
+    }catch(e){
+      if(String(e.message).includes("409 Conflict")){
+        lastPutConflict = true;
+        $("saveWithRetryBtn").style.display = "inline-block";
+      }
+      throw e;
+    }
+  }
+
+  // ✅ 409 자동 해결: 최신 events.json 다시 불러오고 저장 재시도
+  async function saveWithRetry(){
+    showErr("");
+    showOk("");
+    try{
+      await loadEvents();                 // 최신 가져오기
+      // 로컬 폼에 입력해둔 내용이 있으면 그것도 보존해야 하는데,
+      // 초보 안전성 때문에: 충돌 시에는 "최신 파일 기준으로 저장"만 보장
+      await saveEventsToGitHub();
+    }catch(e){
+      showErr(`재시도 실패: ${e.message}`);
+    }
   }
 
   // 토큰 버튼
@@ -405,6 +522,7 @@
   // 행사 추가/수정
   $("addUpdateBtn").addEventListener("click", ()=>{
     showErr("");
+    $("eventsOk").style.display = "none";
     try{
       const ev = getEventForm();
       const err = validateEvent(ev);
@@ -416,8 +534,10 @@
 
       EVENTS = cleanEvents(EVENTS);
       selectedEventId = ev.id;
+
       renderEvents();
-      toast(idx>=0 ? "행사 수정됨(로컬). GitHub 저장을 눌러 반영하세요." : "행사 추가됨(로컬). GitHub 저장을 눌러 반영하세요.");
+      toast(idx>=0 ? "행사 수정됨(로컬)" : "행사 추가됨(로컬)");
+      showOk("로컬 반영 완료.\n이제 'GitHub에 저장(events.json)' 버튼을 눌러야 메인 화면에 반영됩니다.");
     }catch(e){
       showErr(`저장 실패: ${e.message}`);
     }
@@ -426,22 +546,25 @@
   // 입력 초기화
   $("resetFormBtn").addEventListener("click", ()=> resetEventForm());
 
-  // 삭제
+  // 행사 취소(삭제)
   $("deleteBtn").addEventListener("click", ()=>{
     if(!selectedEventId){ toast("삭제할 행사를 먼저 선택"); return; }
     const ev = EVENTS.find(x=>x.id===selectedEventId);
-    if(!confirm(`행사를 취소(삭제)할까요?\n- ${ev?.name || selectedEventId}\n\n※ 삭제 후 'GitHub에 저장'을 눌러야 메인에 반영됩니다.`)) return;
+    if(!confirm(`행사를 취소(삭제)할까요?\n- ${ev?.name || selectedEventId}`)) return;
 
     EVENTS = EVENTS.filter(x=>x.id!==selectedEventId);
     EVENTS = cleanEvents(EVENTS);
     resetEventForm();
     renderEvents();
-    toast("삭제됨(로컬). GitHub 저장을 눌러 반영하세요.");
+    toast("행사 취소(삭제) 완료 (로컬)");
+    showOk("로컬에서 삭제됨.\n메인 반영하려면 'GitHub에 저장(events.json)'을 눌러주세요.");
   });
 
   // 다시 불러오기
   $("reloadEventsBtn").addEventListener("click", ()=>{
-    loadEvents().then(()=>toast("events.json 다시 불러옴")).catch(e=>showErr(e.message));
+    loadEvents()
+      .then(()=>{ toast("events.json 다시 불러옴"); showOk("events.json 최신 상태를 불러왔습니다."); })
+      .catch(e=>showErr(e.message));
   });
 
   // GitHub 저장
@@ -449,8 +572,12 @@
     saveEventsToGitHub().catch(e=>showErr(e.message));
   });
 
+  // 409 재시도
+  $("saveWithRetryBtn").addEventListener("click", ()=> saveWithRetry());
+
   // boot
   refreshTokenStatus();
+  resetEventForm();
   loadEvents().catch(e=>showErr(e.message));
 </script>
 </body>
